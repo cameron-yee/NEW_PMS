@@ -1,0 +1,15 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include "head.html" %}
+    </head>
+    <body>
+        {% include "header.html" %}
+        <div>
+            {% block content %}
+            {% endblock %}
+        </div>
+        {% include "scripts.html" %}
+    </body>
+</html>
