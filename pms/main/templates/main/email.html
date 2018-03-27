@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% load bootstrap4 %}
+
+{% block content %}
+    <div class="container">
+    <button class="btn btn-warning"><a href="/logout">Sign Out</a></button>
+        <div class="col-xs-4">
+            <form id="email-test" method="POST" action={% url 'email' %}>
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
