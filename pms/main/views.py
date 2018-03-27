@@ -7,6 +7,7 @@ from .forms import *
 from django.contrib.auth.models import User
 from .models import Contract, Quote, OrderDetail
 from datetime import datetime
+from reportlab.pdfgen import canvas
 
 last_OID = None
 
@@ -157,5 +158,40 @@ def contract(request):
 @login_required
 def myorders(request):
     user_id = request.user.id
-    myorders = OrderDetail.objects.all() #filter(EID=user_id)
+    myorders = OrderDetail.objects.filter(EID=user_id)
     return render(request, 'main/myorders.html', {'myorders': myorders})
+
+
+@login_required
+def reports(request):
+    return render(request, 'main/reports.html')
+
+
+@login_required
+def generateorderreport(request):
+    contracts = Contract.objects.all()
+    orders = OrderDetail.objects.all()
+    user = str(request.user.first_name + ' ' + request.user.last_name)
+
+    def PDFGen(contracts, orders):
+        def writePDF(contracts, orders, c):
+            x = 100
+            y = 100
+            c.drawString(100, 800, 'Allied Mountain Monthly Orders Report')
+            date = str(datetime.today())
+            c.drawString(100, 750, date)
+            c.drawString(100, 700, user)
+
+            for contract in contracts:
+                c.drawString(x, y, contract.CName)
+                y += 100
+            # c.drawString(100,100, "Hello World")
+
+        c = canvas.Canvas("/Users/cameronyee/Desktop/test.pdf")
+        writePDF(contracts, orders, c)
+        c.showPage()
+        c.save()
+    
+    PDFGen(contracts, orders)
+
+    return HttpResponseRedirect('/')

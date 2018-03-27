@@ -14,7 +14,7 @@ class Quote(models.Model):
 class Contract(models.Model):
     CID = models.AutoField(primary_key=True)
     CName = models.CharField(max_length=30)
-    CBudget = models.IntegerField()
+    CBudget = models.IntegerField() #TODO: should be float
     CStart = models.DateField()
     CEnd = models.DateField(null=True)
 
@@ -30,8 +30,8 @@ class OrderDetail(models.Model):
     addressLine2 = models.CharField(max_length=40, null=True, blank=True)
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=30)
-    zipCode = models.CharField(max_length=10)
-    quantity = models.IntegerField()
+    zipCode = models.CharField(max_length=10) #TODO: should be 5
+    quantity = models.IntegerField() #TODO: max quantity?
     total = models.FloatField()
     orderDate = models.DateField(default=timezone.now)
     dateApproved = models.DateField(null=True, blank=True)
