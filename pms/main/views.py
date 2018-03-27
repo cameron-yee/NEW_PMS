@@ -202,7 +202,7 @@ def generateorderreport(request):
                 y += 100
             # c.drawString(100,100, "Hello World")
 
-        c = canvas.Canvas("/Users/cameronyee/Desktop/test.pdf")
+        c = canvas.Canvas("/Users/carlosgarcia/Desktop/test.pdf")
         writePDF(contracts, orders, c)
         c.showPage()
         c.save()

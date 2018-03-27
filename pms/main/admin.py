@@ -30,8 +30,4 @@ class QuoteAdmin(admin.ModelAdmin):
 
 admin.site.register(OrderDetail, OrderAdmin)
 admin.site.register(Contract, ContractAdmin)
-<<<<<<< HEAD
 admin.site.register(Quote, QuoteAdmin)
-=======
-admin.site.register(Quote, QuoteAdmin)
->>>>>>> fd43819a2aee8271e04d52c074e82c0b6ed6d863
