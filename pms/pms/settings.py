@@ -30,8 +30,8 @@ ALLOWED_HOSTS = [
 ]
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = os.environ.get('EMAIL_USER', '')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS', '')
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER', '') #'yee.camero23@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS', '') #'tyrone11'
 EMAIL_PORT = 587
 #encrypts email
 EMAIL_USE_TLS = True
@@ -85,10 +85,10 @@ WSGI_APPLICATION = 'pms.wsgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DB_NAME', ''),                      
+        'NAME': os.environ.get('DB_NAME', ''), #'pms',                      
         #Set user and password for your postgres pms user
-        'USER': os.environ.get('DB_USER', ''),
-        'PASSWORD': os.environ.get('DB_PASS', ''),
+        'USER': os.environ.get('DB_USER', ''), #'cyee',
+        'PASSWORD': os.environ.get('DB_PASS', ''), #'bigHouse8063!',
         'HOST': 'localhost',
         'PORT': '',
     }
