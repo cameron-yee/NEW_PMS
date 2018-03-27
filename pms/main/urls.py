@@ -10,6 +10,6 @@ urlpatterns = [
     path('quotes', views.quote, name='quotes'),
     path('myorders', views.myorders, name='myorders'),
     path('allorders', views.allorders, name='allorders')
-
-
+    path('reports', views.reports, name='reports'),
+    path('generateorderreport', views.generateorderreport, name='generateorderreport'),
 ]

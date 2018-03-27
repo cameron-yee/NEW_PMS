@@ -1,3 +1,21 @@
+# from django.contrib import admin
+# from .models import OrderDetail, Contract, Quote
+
+# class TaskAdmin(admin.ModelAdmin):
+#     list_display = ['CName', 'CBudget', 'CStart', 'CEnd']
+
+
+# def formfield_for_dbfield(self, db_field, request, **kwargs):
+#     field = super(MyModelAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
+#     if db_field.name == 'groups':
+#         field.queryset = field.queryset.filter(user=request.user)
+#     return field
+
+
+# admin.site.register(OrderDetail)
+# admin.site.register(Contract, TaskAdmin)
+# admin.site.register(Quote)
+
 from django.contrib import admin
 from .models import OrderDetail, Contract, Quote
 
@@ -12,4 +30,8 @@ class QuoteAdmin(admin.ModelAdmin):
 
 admin.site.register(OrderDetail, OrderAdmin)
 admin.site.register(Contract, ContractAdmin)
+<<<<<<< HEAD
 admin.site.register(Quote, QuoteAdmin)
+=======
+admin.site.register(Quote, QuoteAdmin)
+>>>>>>> fd43819a2aee8271e04d52c074e82c0b6ed6d863

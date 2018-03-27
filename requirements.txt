@@ -1,3 +1,5 @@
 Django==2.0.2
 psycopg2==2.7.4
 django-bootstrap4==0.0.6
+pillow==5.0.0
+reportlab==3.4.0

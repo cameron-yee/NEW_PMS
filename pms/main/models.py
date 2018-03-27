@@ -18,7 +18,7 @@ class Quote(models.Model):
 class Contract(models.Model):
     CID = models.AutoField(primary_key=True, verbose_name= 'contract ID')
     CName = models.CharField(max_length=30, verbose_name= 'contract Name')
-    CBudget = models.IntegerField(verbose_name= 'budget')
+    CBudget = models.IntegerField(verbose_name= 'budget') 
     CStart = models.DateField(verbose_name= 'contract Start Date')
     CEnd = models.DateField(null=True, verbose_name= 'contract End Date')
     def __str__(self):
@@ -36,8 +36,8 @@ class OrderDetail(models.Model):
     addressLine2 = models.CharField(max_length=40, null=True, blank=True)
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=30)
-    zipCode = models.CharField(max_length=10, verbose_name= 'zip Code')
-    quantity = models.IntegerField()
+    zipCode = models.CharField(max_length=10, verbose_name= 'zip Code') #TODO: should be 5
+    quantity = models.IntegerField() #TODO: max quantity?
     total = models.FloatField(verbose_name= 'order Total')
     orderDate = models.DateField(default=timezone.now, verbose_name= 'date Requested')
     dateApproved = models.DateField(null=True, blank=True, verbose_name= 'date Approved')
