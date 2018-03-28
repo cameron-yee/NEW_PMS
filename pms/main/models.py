@@ -2,6 +2,9 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MinValueValidator
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
+
 
 # Create your models here.
 class Quote(models.Model):
@@ -43,5 +46,34 @@ class OrderDetail(models.Model):
     isPending = models.BooleanField(default=True, verbose_name= 'Pending')
     isDenied = models.BooleanField(default=False, verbose_name= 'Denied')
     isApproved = models.BooleanField(default=False, verbose_name= 'Approved')
+
+    __original_denied_value = False #original link https://stackoverflow.com/questions/1355150/django-when-saving-how-can-you-check-if-a-field-has-changed
+    __original_approved_value = False
+    def __init__(self, *args, **kwargs):
+        super(OrderDetail, self).__init__(*args, **kwargs)
+        #self.__original_denied_value = self.isDenied
+       # self.__original_approved_value = self.isApproved
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        req_user = User.objects.get(username=self.EID)  
+        if self.isDenied != self.__original_denied_value:
+            send_mail(
+                'PURCHASE ORDER CONFIRMATION',
+                'Hi {},\n\nYou\'re recent purchase request for {} has been denied.\n\nPurchase Management System'.format(req_user.first_name, self.productName),
+                'yee.camero23@gmail.com', #Make info@system.com email
+                [req_user.email],
+                fail_silently=False,
+            )
+        if self.isApproved != self.__original_approved_value:
+            send_mail(
+                'PURCHASE ORDER CONFIRMATION',
+                'Hi {},\n\nYou\'re recent purchase request for {} has been Approved.\n\nPurchase Management System'.format(req_user.first_name, self.productName),
+                'yee.camero23@gmail.com', #Make info@system.com email
+                [req_user.email],
+                fail_silently=False,
+            )
+        super(OrderDetail, self).save(force_insert, force_update, *args, **kwargs)
+        self.__original_denied_value = self.isDenied
+        self.__original_approved_value = self.isApproved
+
     def __str__(self):
         return '#{}'.format(self.OID)

@@ -86,6 +86,8 @@ def order(request):
                     quote = current_quote
                     current_purchase_form.QID = quote
                     current_purchase_form.dateApproved = datetime.now()
+                    current_purchase_form.isPending = False
+                    current_purchase_form.isApproved = True
                     current_purchase_form.save()
 
                 setChosenQuote(current_purchase_form, current_quote)
@@ -170,6 +172,9 @@ def myorders(request):
 @login_required
 def allorders(request):
     allorders = OrderDetail.objects.all()
+    #allorders = OrderDetail.objects.all().order_by('isDenied')
+    #allorders = OrderDetail.objects.all().order_by('isPending')
+    #allorders = OrderDetail.objects.all().order_by('isApproved')
     #order_ids = [OrderDetail.OID for item in myorders]
     #myquotes = Quote.objects.filter(OID=[OrderDetail.OID for item in myorders])
     #might need to add EID to each quote unless Cameron can get the query working
