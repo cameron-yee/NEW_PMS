@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django import forms
 from django.contrib.auth.decorators import login_required
 from .forms import * 
@@ -9,6 +9,7 @@ from .models import Contract, Quote, Order
 from datetime import datetime
 import os
 from reportlab.pdfgen import canvas
+from io import BytesIO
 
 last_OID = None
 
@@ -169,17 +170,17 @@ def myorders(request):
 
     return render(request, 'main/myorders.html', {'myorders': myorders, 'myquotes': myquotes})
 
-@login_required
-def allorders(request):
-    allorders = Order.objects.all()
-    #allorders = Order.objects.all().order_by('isDenied')
-    #allorders = Order.objects.all().order_by('isPending')
-    #allorders = Order.objects.all().order_by('isApproved')
-    #order_ids = [Order.OID for item in myorders]
-    #myquotes = Quote.objects.filter(OID=[Order.OID for item in myorders])
-    #might need to add EID to each quote unless Cameron can get the query working
+# @login_required
+# def allorders(request):
+#     allorders = Order.objects.all()
+#     #allorders = Order.objects.all().order_by('isDenied')
+#     #allorders = Order.objects.all().order_by('isPending')
+#     #allorders = Order.objects.all().order_by('isApproved')
+#     #order_ids = [Order.OID for item in myorders]
+#     #myquotes = Quote.objects.filter(OID=[Order.OID for item in myorders])
+#     #might need to add EID to each quote unless Cameron can get the query working
 
-    return render(request, 'main/allorders.html', {'allorders': allorders})
+#     return render(request, 'main/allorders.html', {'allorders': allorders})
 
 
 @login_required
@@ -192,6 +193,13 @@ def generateorderreport(request):
     contracts = Contract.objects.all()
     orders = Order.objects.all()
     user = str(request.user.first_name + ' ' + request.user.last_name)
+
+    filename = 'OrdersReport--{}'.format(datetime.today().strftime('%Y-%m-%d'))
+    # Make your response and prep to attach
+    response = HttpResponse(content_type='application/pdf')
+    # Specifies file should be downloaded as web attachment
+    response['Content-Disposition'] = 'attachment; filename=%s.pdf' % (filename)
+    tmp = BytesIO()
 
     def PDFGen(contracts, orders):
         def writePDF(contracts, orders, c):
@@ -207,11 +215,36 @@ def generateorderreport(request):
                 y += 100
             # c.drawString(100,100, "Hello World")
 
-        c = canvas.Canvas("/Users/carlosgarcia/Desktop/test.pdf")
+        # c = canvas.Canvas('/Users/cameronyee/Desktop/test.pdf')
+        c = canvas.Canvas(tmp)
         writePDF(contracts, orders, c)
         c.showPage()
         c.save()
-    
-    PDFGen(contracts, orders)
 
-    return HttpResponseRedirect('/')
+        pdf = tmp.getvalue()
+        tmp.close()
+
+        # user_first_name = request.user.first_name
+        # user_email = request.user.email
+        # message = EmailMessage(
+        #     'PMS Order Report', #subject
+        #     'Hello {}'.format(user_first_name), #message body
+        #     'yee.camero23@gmail.com', #sender
+        #     [user_email,], #list of recipients
+        # )
+        # # message.attach('Order Report', '/Users/cameronyee/Desktop/test.pdf', 'application/pdf')
+        # # message.attach_file('/Users/cameronyee/Desktop/test.pdf')
+        # message.send()
+        return pdf
+
+    pdf = PDFGen(contracts, orders)
+    # request.session['pdf'] = pdf NOT WORKING, JSON error
+
+    response.write(pdf)
+    return response #HttpResponseRedirect('/main/report') #, response #HttpResponseRedirect('/')
+
+
+# def report(request):
+#     pdf = request.session['pdf']
+#     pdf.decode('utf-8')
+#     return render(request, 'main/report.html', {'pdf': pdf})

@@ -9,7 +9,8 @@ urlpatterns = [
     path('contract', views.contract, name='contract'),
     path('quotes', views.quote, name='quotes'),
     path('myorders', views.myorders, name='myorders'),
-    path('allorders', views.allorders, name='allorders'),
+    # path('allorders', views.allorders, name='allorders'),
     path('reports', views.reports, name='reports'),
-    path('generateorderreport', views.generateorderreport, name='generateorderreport')
+    path('generateorderreport', views.generateorderreport, name='generateorderreport'),
+    # path('report', views.report, name='report'),
 ]

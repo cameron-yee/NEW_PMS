@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <object data={{ pdf }} type='application/pdf'></object>
+            </div>
+        </div> 
+    </div>
+{% endblock content %}
+

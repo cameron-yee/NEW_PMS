@@ -20,7 +20,8 @@ from django.contrib import admin
 from .models import Order, Contract, Quote
 
 class ContractAdmin(admin.ModelAdmin):
-    list_display = ['CName', 'CBudget', 'CStart', 'CEnd']
+    list_display = ['CName', 'CBudget', 'remainingBudget', 'CStart', 'CEnd']
+    exclude = ['remainingBudget',] #list of fields to exclude from the Django add function
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['OID', 'EID', 'CID', 'productName', 'total', 'orderDate', 'QID', 'isPending', 'isApproved', 'isDenied']
