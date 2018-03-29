@@ -3,9 +3,12 @@
 <div class="jumbotron jumbotron-fluid" style="padding-bottom: 0;">
   <div class="container" style="color: black;">
       <div class="row">
+          <!-- <div class="col-2" style="background: white;">
+              <img src="{% static 'images/AM.png' %}" style="width: 100%;" alt="Allied Mountain Logo"/>
+          </div> -->
           <div class="col-10">
-              <h1 class="display-4">Allied Mountain Purchase Management System</h1>
-              <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+              <h1 class="display-4">Allied Mountain PMS</h1>
+              <p class="lead">Track and place order requests</p>
           </div>
       </div>
   </div> 
@@ -25,19 +28,20 @@
         <li class="nav-item">
           <a class="nav-link" href="http://127.0.0.1:8000/main/myorders">My Orders</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://127.0.0.1:8000/main/reports">Reports</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://127.0.0.1:8000/admin">Admin</a>
-        </li>
-        {% if user.is_superuser %}
-        <li class="nav-item">
-            <a class="nav-link" href="http://127.0.0.1:8000/main/allorders">All Orders </a>
-          </li>
-        {% endif %}
-
       </ul>
+        {% if user.is_superuser %}
+        <ul class="navbar-nav mr-auto" style="display: flex; float: right; margin-right: 0 !important;">
+          <li class="nav-item">
+            <a class="nav-link" href="http://127.0.0.1:8000/main/reports">Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://127.0.0.1:8000/admin">Admin</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="http://127.0.0.1:8000/main/allorders">All Orders </a>
+          </li>
+        </ul>
+        {% endif %}
       <!--<div>
         <button id="logout" class="btn btn-warning"><a href="/logout">Sign Out</a></button>
       </div>-->

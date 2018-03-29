@@ -1,16 +1,23 @@
 {% extends 'layout.html' %}
+{% load static %}
 <!-- {% load bootstrap4 %} -->
 
 {% block title %}Login{% endblock %}
 
 {% block content %}
-  <form method="post" align='center'>
-    {% csrf_token %}
-    <div>
-        <img src="../../main/images/AM.png" alt="My image"/>
-      </div>
-    <h2>Login</h2>
-    {{ form.as_p }}
-    <button class="btn btn-primary" type="submit">Login</button>
-  </form>
+<div class="container">
+  <div class="row">
+    <div id="login" class="col-3 ml-auto mr-auto">
+      <form method="post" align='center'>
+        {% csrf_token %}
+        <div>
+            <img src="{% static 'images/AM.png' %}" style="width: 40%;" alt="Allied Mountain Logo"/>
+          </div>
+        <h2>Login</h2>
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

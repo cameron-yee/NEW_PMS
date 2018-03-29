@@ -24,10 +24,16 @@ class ContractAdmin(admin.ModelAdmin):
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['OID', 'EID', 'CID', 'productName', 'total', 'orderDate', 'QID']
+    def has_add_permission(self, request):
+        return False
 
 class QuoteAdmin(admin.ModelAdmin):
     list_display = ['OID', 'QPrice', 'Supplier']
+    def has_add_permission(self, request):
+        return False
 
 admin.site.register(OrderDetail, OrderAdmin)
 admin.site.register(Contract, ContractAdmin)
 admin.site.register(Quote, QuoteAdmin)
+
+admin.site.site_header = 'Allied Mountain Administration'
