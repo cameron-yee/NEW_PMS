@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from .forms import * 
 from django.contrib.auth.models import User
-from .models import Contract, Quote, OrderDetail
+from .models import Contract, Quote, Order
 from datetime import datetime
 import os
 from reportlab.pdfgen import canvas
@@ -120,7 +120,7 @@ def order(request):
 
 @login_required
 def quote(request):
-    selected_order = OrderDetail.objects.get(OID=request.session['selected_order'])
+    selected_order = Orders.objects.get(OID=request.session['selected_order'])
     #MIGHT NEED TO CLOSE SESSIONS
 
     if request.method == "POST":
@@ -161,9 +161,9 @@ def contract(request):
 @login_required
 def myorders(request):
     user_id = request.user.id
-    myorders = OrderDetail.objects.filter(EID=user_id)
-    #order_ids = [OrderDetail.OID for item in myorders]
-    #myquotes = Quote.objects.filter(OID=[OrderDetail.OID for item in myorders])
+    myorders = Order.objects.filter(EID=user_id)
+    #order_ids = [Order.OID for item in myorders]
+    #myquotes = Quote.objects.filter(OID=[Order.OID for item in myorders])
     #might need to add EID to each quote unless Cameron can get the query working
     myquotes = Quote.objects.all()
 
@@ -171,12 +171,12 @@ def myorders(request):
 
 @login_required
 def allorders(request):
-    allorders = OrderDetail.objects.all()
-    #allorders = OrderDetail.objects.all().order_by('isDenied')
-    #allorders = OrderDetail.objects.all().order_by('isPending')
-    #allorders = OrderDetail.objects.all().order_by('isApproved')
-    #order_ids = [OrderDetail.OID for item in myorders]
-    #myquotes = Quote.objects.filter(OID=[OrderDetail.OID for item in myorders])
+    allorders = Order.objects.all()
+    #allorders = Order.objects.all().order_by('isDenied')
+    #allorders = Order.objects.all().order_by('isPending')
+    #allorders = Order.objects.all().order_by('isApproved')
+    #order_ids = [Order.OID for item in myorders]
+    #myquotes = Quote.objects.filter(OID=[Order.OID for item in myorders])
     #might need to add EID to each quote unless Cameron can get the query working
 
     return render(request, 'main/allorders.html', {'allorders': allorders})
@@ -190,7 +190,7 @@ def reports(request):
 @login_required
 def generateorderreport(request):
     contracts = Contract.objects.all()
-    orders = OrderDetail.objects.all()
+    orders = Order.objects.all()
     user = str(request.user.first_name + ' ' + request.user.last_name)
 
     def PDFGen(contracts, orders):

@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from . import models
-from .models import OrderDetail, Contract
+from .models import Order, Contract
 from django.utils.translation import gettext_lazy as _
 
 class ContactForm(forms.Form):
@@ -17,7 +17,7 @@ class MyModelChoiceField(forms.ModelChoiceField): #gets the Contract name for th
 class PurchaseOrderForm(ModelForm):
     CID = MyModelChoiceField(queryset=Contract.objects.all()) #inserts the names of the contracts in the Contract choice fields
     class Meta: 
-        model = models.OrderDetail
+        model = models.Order
         fields = ['orderDate', 'CID', 'productName', 'productDescription', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode','quantity']
 
     def __init__(self, *args, **kwargs):

@@ -9,3 +9,7 @@ vs.py
 *.pyc
 
 pms/main/migrations/
+
+node_modules
+
+package-lock.json
