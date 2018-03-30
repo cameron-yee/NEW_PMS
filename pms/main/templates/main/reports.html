@@ -6,8 +6,11 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-4">
-                <form id="reports" method="POST" action={% url 'generateorderreport' %}>
+                    <form id="reports" method="POST" action={% url 'generateorderreport' %}>
                     {% csrf_token %}
+                    {% bootstrap_form dates %}
+                    <!--{% bootstrap_field dates.startDate %}
+                    {% bootstrap_field dates.endDate %}-->
                     <button type="submit" value="Submit" class="btn btn-primary">Download Orders Report</button>
                 </form>
             </div>

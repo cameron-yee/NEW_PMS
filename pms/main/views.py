@@ -9,6 +9,7 @@ from .models import Contract, Quote, Order
 from datetime import datetime
 import os
 from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
 from io import BytesIO
 
 last_OID = None
@@ -185,63 +186,87 @@ def myorders(request):
 
 @login_required
 def reports(request):
-    return render(request, 'main/reports.html')
-
+    if request.method == 'POST': 
+        dates = DateForm(request.POST)
+        return HttpResponseRedirect('/')
+    else:
+        dates = DateForm()
+        return render(request, 'main/reports.html', {'dates': dates})
 
 @login_required
 def generateorderreport(request):
-    contracts = Contract.objects.all()
-    orders = Order.objects.all()
-    user = str(request.user.first_name + ' ' + request.user.last_name)
+    if request.method == 'POST': 
+        dates_form = DateForm(request.POST)
+        start_Date = request.POST.get('startDate')
+        end_Date = request.POST.get('endDate')
 
-    filename = 'OrdersReport--{}'.format(datetime.today().strftime('%Y-%m-%d'))
-    # Make your response and prep to attach
-    response = HttpResponse(content_type='application/pdf')
-    # Specifies file should be downloaded as web attachment
-    response['Content-Disposition'] = 'attachment; filename=%s.pdf' % (filename)
-    tmp = BytesIO()
+        contracts = Contract.objects.all()
+        orders = Order.objects.filter(isApproved=True)
+        user = str(request.user.first_name + ' ' + request.user.last_name)
 
-    def PDFGen(contracts, orders):
-        def writePDF(contracts, orders, c):
-            x = 100
-            y = 100
-            c.drawString(100, 800, 'Allied Mountain Monthly Orders Report')
-            date = str(datetime.today())
-            c.drawString(100, 750, date)
-            c.drawString(100, 700, user)
+        filename = 'OrdersReport--{}'.format(datetime.today().strftime('%m-%d-%Y'))
+        # Make your response and prep to attach
+        response = HttpResponse(content_type='application/pdf')
+        # Specifies file should be downloaded as web attachment
+        response['Content-Disposition'] = 'attachment; filename=%s.pdf' % (filename)
+        tmp = BytesIO()
 
-            for contract in contracts:
-                c.drawString(x, y, contract.CName)
-                y += 100
-            # c.drawString(100,100, "Hello World")
+        def PDFGen(contracts, orders):
+            def writePDF(contracts, orders, c):
+                x = 100
+                y = 685
+                z = 670
+                c.setFont("Helvetica", 28)
+                c.drawString(150, 780, 'Monthly Spending Report')
+                c.setFont("Helvetica", 16)
+                c.drawString(175, 755, 'For dates ' + start_Date + ' - ' + end_Date)
 
-        # c = canvas.Canvas('/Users/cameronyee/Desktop/test.pdf')
-        c = canvas.Canvas(tmp)
-        writePDF(contracts, orders, c)
-        c.showPage()
-        c.save()
+                date = str(datetime.today().strftime('%m-%d-%Y'))
+                c.drawString(485, 820, date)
+                c.drawString(100, 700, user)
 
-        pdf = tmp.getvalue()
-        tmp.close()
+                for contract in contracts:
+                    c.setFont("Helvetica", 16)
+                    c.drawString(x, y, 'Contract: ' + contract.CName)
+                    c.setFont("Helvetica", 12)
+                    for order in orders.filter(CID=contract.CID, dateApproved__range=(start_Date, end_Date)):
+                        c.drawString(x + 10, z, str(order.dateApproved) + ' ' + order.productName + ' ' + str(order.quantity) + ' ' + str(order.total/order.quantity) + ' ' + str(order.total))
+                        z -= 15
+                    y = z - 10
+                    z = y - 15
 
-        # user_first_name = request.user.first_name
-        # user_email = request.user.email
-        # message = EmailMessage(
-        #     'PMS Order Report', #subject
-        #     'Hello {}'.format(user_first_name), #message body
-        #     'yee.camero23@gmail.com', #sender
-        #     [user_email,], #list of recipients
-        # )
-        # # message.attach('Order Report', '/Users/cameronyee/Desktop/test.pdf', 'application/pdf')
-        # # message.attach_file('/Users/cameronyee/Desktop/test.pdf')
-        # message.send()
-        return pdf
+                # c.drawString(100,100, "Hello World")
 
-    pdf = PDFGen(contracts, orders)
-    # request.session['pdf'] = pdf NOT WORKING, JSON error
+            # c = canvas.Canvas('/Users/cameronyee/Desktop/test.pdf')
+            c = canvas.Canvas(tmp)
+            writePDF(contracts, orders, c)
+            c.showPage()
+            c.save()
 
-    response.write(pdf)
-    return response #HttpResponseRedirect('/main/report') #, response #HttpResponseRedirect('/')
+            pdf = tmp.getvalue()
+            tmp.close()
+
+            # user_first_name = request.user.first_name
+            # user_email = request.user.email
+            # message = EmailMessage(
+            #     'PMS Order Report', #subject
+            #     'Hello {}'.format(user_first_name), #message body
+            #     'yee.camero23@gmail.com', #sender
+            #     [user_email,], #list of recipients
+            # )
+            # # message.attach('Order Report', '/Users/cameronyee/Desktop/test.pdf', 'application/pdf')
+            # # message.attach_file('/Users/cameronyee/Desktop/test.pdf')
+            # message.send()
+            return pdf
+
+        pdf = PDFGen(contracts, orders)
+        # request.session['pdf'] = pdf NOT WORKING, JSON error
+
+        response.write(pdf)
+        return response #HttpResponseRedirect('/main/report') #, response #HttpResponseRedirect('/')
+    else:
+        form = DateForm()
+        response #HttpResponseRedirect('/')
 
 
 # def report(request):

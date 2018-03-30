@@ -29,11 +29,14 @@
           <a class="nav-link" href="http://127.0.0.1:8000/main/myorders">My Orders</a>
         </li>
       </ul>
-        {% if user.is_superuser %}
+
         <ul class="navbar-nav mr-auto" style="display: flex; float: right; margin-right: 0 !important;">
+          {% if user.is_superuser %}
           <li class="nav-item">
             <a class="nav-link" href="http://127.0.0.1:8000/main/reports">Reports</a>
           </li>
+          {% endif %}
+          {% if user.is_staff %}
           <li class="nav-item">
             <a class="nav-link" href="http://127.0.0.1:8000/admin">Admin</a>
           </li>

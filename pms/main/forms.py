@@ -39,4 +39,8 @@ class QuoteForm(ModelForm):
     def __init__(self, *args, **kwargs): 
         super(QuoteForm, self).__init__(*args, **kwargs)
         self.fields['QPrice'].widget.attrs['min'] = 0.01 #sets the minimum allowable price to 0.01
+
+class DateForm(forms.Form):
+    startDate = forms.DateField(label='Start Date')
+    endDate = forms.DateField(label='End Date')
     
