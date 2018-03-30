@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% load humanize %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="container">
+                <h1>Employee Spending</h1>
+                <table class="table table-dark table-hover table-striped">
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Contract ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Contract Name</th>
+                        <th>Total Spending Per Contract</th>
+                    </tr>
+                    {% for key, value in records.items %}
+                        <tr>
+                            {% for v in value %}
+                            <td>{{ v }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div> 
+{% endblock content %}
