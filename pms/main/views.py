@@ -183,11 +183,7 @@ def employee_spending(request):
 def myorders(request):
     user_id = request.user.id
     myorders = Order.objects.filter(EID=user_id)
-    #order_ids = [Order.OID for item in myorders]
-    #myquotes = Quote.objects.filter(OID=[Order.OID for item in myorders])
-    #might need to add EID to each quote unless Cameron can get the query working
     myquotes = Quote.objects.all()
-
     return render(request, 'main/myorders.html', {'myorders': myorders, 'myquotes': myquotes})
 
 # @login_required

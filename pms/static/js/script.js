@@ -1,4 +1,5 @@
-document.mainForm.onclick = function(){
-    var gender = document.querySelector('input[name = gender]:checked').value;
-    result.innerHTML = 'You Gender: '+gender;
-}
+$(document).ready(function() {
+    $(function() {
+        $('nav a[href^="/' + location.pathname.split("/").slice(-1) + '"]').addClass('active');
+    });
+});

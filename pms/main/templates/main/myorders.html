@@ -14,19 +14,47 @@
                             <th>Quantity</th>
                             <th>Total Cost</th>
                             <th>Date Approved</th>
+                            <th>Quotes</th>
                         </tr>
                 {% for order in myorders %}
-                        <tr>
-                            <td>{{ order.OID }}</td>
-                            <td>{{ order.productName }}</td>
-                            <td>{{ order.productDescription }}</td>
-                            <td>{{ order.quantity }}</td>
-                            <td>{{ order.total }}</td>
-                            <td>{{ order.dateApproved }}</td>
-                        </tr>
-                    </table>
+                        <div id="accordion" style="display: none;">
+                            <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <tr>
+                                    <td>{{ order.OID }}</td>
+                                    <td>{{ order.productName }}</td>
+                                    <td>{{ order.productDescription }}</td>
+                                    <td>{{ order.quantity }}</td>
+                                    <td>{{ order.total }}</td>
+                                    <td>{{ order.dateApproved }}</td>
+                                    <td>
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-info btn-sm collapsed" data-toggle="collapse" data-target="#collapse{{ forloop.counter0 }}" aria-expanded="false" aria-controls="collapseOne">
+                                                See Quotes 
+                                            </button>
+                                        </h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7">
+                                        <div id="collapse{{ forloop.counter0 }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                                            <div class="card-body">
+                                            {% for quote in myquotes %}
+                                                {% if quote.OID == order.OID %}
+                                                    <p>{{ quote.QLINK }}</p>
+                                                    <p>{{ quote.QPrice }}</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </div>
+                            </div>
+                        </div>
                 {% endfor %}
-                <br> <br>
+                    </table>
+                <!-- <br> <br>
                 <h1>My Quotes</h1>
                 <table class="table table-dark table-hover table-striped">
                     <tr>
@@ -42,8 +70,8 @@
                         <td>{{ quote.QPrice }}</td>
                         <td>{{ quote.QLink }}</td>
                     </tr>
-                </table>
             {% endfor %}
+                </table> -->
             </div>
         </div>
     </div>
