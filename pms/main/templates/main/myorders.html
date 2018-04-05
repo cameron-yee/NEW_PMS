@@ -16,17 +16,17 @@
                             <th>Date Approved</th>
                             <th>Quotes</th>
                         </tr>
-                {% for order in myorders %}
+                {% for quoteorder in myquoteorders %}
                         <div id="accordion" style="display: none;">
                             <div class="card">
                             <div class="card-header" id="headingOne">
                                 <tr>
-                                    <td>{{ order.OID }}</td>
-                                    <td>{{ order.productName }}</td>
-                                    <td>{{ order.productDescription }}</td>
-                                    <td>{{ order.quantity }}</td>
-                                    <td>{{ order.total }}</td>
-                                    <td>{{ order.dateApproved }}</td>
+                                    <td>{{ quoteorder.order__OID }}</td>
+                                    <td>{{ quoteorder.order__productName }}</td>
+                                    <td>{{ quoteorder.order__productDescription }}</td>
+                                    <td>{{ quoteorder.order__quantity }}</td>
+                                    <td>{{ quoteorder.order__total }}</td>
+                                    <td>{{ quoteorder.order__dateApproved }}</td>
                                     <td>
                                         <h5 class="mb-0">
                                             <button class="btn btn-info btn-sm collapsed" data-toggle="collapse" data-target="#collapse{{ forloop.counter0 }}" aria-expanded="false" aria-controls="collapseOne">
@@ -39,12 +39,9 @@
                                     <td colspan="7">
                                         <div id="collapse{{ forloop.counter0 }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                                             <div class="card-body">
-                                            {% for quote in myquotes %}
-                                                {% if quote.OID == order.OID %}
-                                                    <p>{{ quote.QLINK }}</p>
-                                                    <p>{{ quote.QPrice }}</p>
-                                                {% endif %}
-                                            {% endfor %}
+                                                <p>Supplier: {{ quoteorder.Supplier }}</p>
+                                                <p>Price: {{ quoteorder.QPrice }}</p>
+                                                <p>Link: {{ quoteorder.QLink }}</p>
                                             </div>
                                         </div>
                                     </td>
