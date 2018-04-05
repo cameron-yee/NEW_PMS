@@ -1,11 +1,9 @@
 from django.db import models
-from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from datetime import datetime
-
 
 # Create your models here.
 class Quote(models.Model):
@@ -45,9 +43,10 @@ class Order(models.Model):
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=25)
     zipCode = models.CharField(max_length=5, verbose_name= 'zip Code')
+    phoneNumber = models.CharField(max_length=15, blank=True, verbose_name='Phone Number') #Outputs error if you use regexvalidation, not sure what to do to validate this field
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name= 'order Total')
-    orderDate = models.DateField(default=timezone.now, verbose_name= 'date of Request')
+    orderDate = models.DateField(default=datetime.now, verbose_name= 'date of Request')
     dateApproved = models.DateField(null=True, blank=True, verbose_name= 'date Approved')
     dateReceived = models.DateField(null=True, blank=True, verbose_name= 'date Received')
     isPending = models.BooleanField(default=True, verbose_name= 'Pending')
@@ -67,8 +66,8 @@ class Order(models.Model):
                 contract_type.save() #saves the contract model and readds the total the was previously taken away
                 self.dateApproved = None #resets the dateApproved field to empty
             send_mail(
-                'PURCHASE ORDER CONFIRMATION',
-                'Hi {},\n\nYou\'re recent purchase request for {} has been denied.\n\nPurchase Management System'.format(req_user.first_name, self.productName),
+                'PURCHASE ORDER #{} CONFIRMATION'.format(self.OID),
+                'Hi {},\n\nYour recent purchase order #{} request for item: "{}" has been denied.\n\nAM Purchase Management System'.format(req_user.first_name, self.OID, self.productName),
                 'yee.camero23@gmail.com', #Make info@system.com email
                 [req_user.email], #gets the email from the user that requested the item
                 fail_silently=False,
@@ -78,8 +77,8 @@ class Order(models.Model):
             contract_type.save() #saves the contract model to show the new remainingBudget
             self.dateApproved = datetime.now() #sets the approved date to now
             send_mail(
-                'PURCHASE ORDER CONFIRMATION',
-                'Hi {},\n\nYou\'re recent purchase request for {} has been Approved.\n\nPurchase Management System'.format(req_user.first_name, self.productName),
+                'PURCHASE ORDER {} CONFIRMATION'.format(self.OID),
+                'Hi {},\n\nYour recent purchase order #{} request for item: "{}" has been Approved.\n\n\nAM Purchase Management System'.format(req_user.first_name, self.OID, self.productName),
                 'yee.camero23@gmail.com', #Make info@system.com email
                 [req_user.email],
                 fail_silently=False,

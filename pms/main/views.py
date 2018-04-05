@@ -93,21 +93,13 @@ def order(request):
                     current_purchase_form.save()
 
                 setChosenQuote(current_purchase_form, current_quote)
-
-                send_mail(
-                    'PURCHASE ORDER CONFIRMATION',
-                    'Hi {}, you\'re purchase order form has been received.  The order form has been approved with the given quote.\n\nPurchase Management System'.format(request.user.first_name),
-                    'yee.camero23@gmail.com', #Make info@system.com email
-                    [user_email],
-                    fail_silently=False,
-                )
             elif finished_purchase_form.total >= 500:
                     request.session['selected_order'] = finished_purchase_form.OID
                     return HttpResponseRedirect('/main/quotes')
             else:
                 send_mail(
-                    'PURCHASE ORDER CONFIRMATION',
-                    'Hi {}, you\'re purchase order form has been received. Management will get back to you after reviewing the quote\n\nPurchase Management System'.format(request.user.first_name),
+                    'PURCHASE ORDER #{} CONFIRMATION'.format(self.OID),
+                    'Hi {},\n\nYour purchase order #{} request for item: "{}" has been received. Management will get back to you after reviewing the quote.\n\n\nPurchase Management System'.format(request.user.first_name, self.OID, self.productName),
                     'yee.camero23@gmail.com', #Make info@system.com email
                     [user_email],
                     fail_silently=False,
@@ -122,7 +114,7 @@ def order(request):
 
 @login_required
 def quote(request):
-    selected_order = Orders.objects.get(OID=request.session['selected_order'])
+    selected_order = Order.objects.get(OID=request.session['selected_order'])
     #MIGHT NEED TO CLOSE SESSIONS
 
     if request.method == "POST":

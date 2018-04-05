@@ -3,6 +3,9 @@ from django.forms import ModelForm
 from . import models
 from .models import Order, Contract
 from django.utils.translation import gettext_lazy as _
+from datetime import datetime
+from django.conf import settings
+
 
 class ContactForm(forms.Form):
     subject = forms.CharField(max_length=100)
@@ -18,7 +21,7 @@ class PurchaseOrderForm(ModelForm):
     CID = MyModelChoiceField(queryset=Contract.objects.all()) #inserts the names of the contracts in the Contract choice fields
     class Meta: 
         model = models.Order
-        fields = ['orderDate', 'CID', 'productName', 'productDescription', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode','quantity']
+        fields = ['orderDate', 'CID', 'productName', 'productDescription', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode','quantity', 'phoneNumber']
 
     def __init__(self, *args, **kwargs):
         super(PurchaseOrderForm, self).__init__(*args, **kwargs)
@@ -41,6 +44,5 @@ class QuoteForm(ModelForm):
         self.fields['QPrice'].widget.attrs['min'] = 0.01 #sets the minimum allowable price to 0.01
 
 class DateForm(forms.Form):
-    startDate = forms.DateField(label='Start Date')
-    endDate = forms.DateField(label='End Date')
-    
+    startDate = forms.DateField(initial=datetime.today().strftime('%Y-%m-%d'), label='Start Date')
+    endDate = forms.DateField(initial=datetime.today().strftime('%Y-%m-%d'), label='End Date')
