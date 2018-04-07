@@ -17,7 +17,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="http://127.0.0.1:8000/">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="http://127.0.0.1:8000/">Home</a> <!--<span class="sr-only">(current)</span>-->
         </li>
         <li class="nav-item">
           <a class="nav-link" href="http://127.0.0.1:8000/main/order">Order</a>
@@ -34,6 +34,9 @@
           {% if user.is_superuser %}
           <li class="nav-item">
             <a class="nav-link" href="http://127.0.0.1:8000/main/reports">Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://127.0.0.1:8000/main/employee-spending">Employee Spending</a>
           </li>
           {% endif %}
           {% if user.is_staff %}

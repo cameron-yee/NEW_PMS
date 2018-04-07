@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import * 
 from django.contrib.auth.models import User
 from .models import Contract, Quote, Order
+from django.db.models import Sum, Count
 from datetime import datetime
 import os
 from reportlab.pdfgen import canvas
@@ -14,10 +15,12 @@ from io import BytesIO
 
 last_OID = None
 
+#view to generate home page
 @login_required
 def home(request):
     return render(request, 'main/home.html')
 
+#an example view for a contact page
 @login_required
 def email(request):
     # if this is a POST request we need to process the form data
@@ -44,7 +47,7 @@ def email(request):
 
     return render(request, 'main/email.html', {'form': form})
 
-
+#view to generate order page and run order request logic
 @login_required
 def order(request):
     if request.method == "POST":
@@ -153,14 +156,26 @@ def contract(request):
 
 
 @login_required
+def employee_spending(request):
+    records = {}
+    employee_spending = Order.objects.values('EID', 'CID').annotate(Sum('total'))
+    count = 0
+    for queryset in employee_spending:
+        # for key, value in queryset.items():
+        EID = queryset['EID']
+        user_info = User.objects.values('first_name', 'last_name').filter(id=EID)
+        CID = queryset['CID']
+        contract_name = Contract.objects.values('CName').filter(CID=CID)
+        records[str(count)] = EID, CID, user_info[0]['first_name'], user_info[0]['last_name'], contract_name[0]['CName'], queryset['total__sum']
+        count += 1
+    return render(request, 'main/employee-spending.html', {'records': records})
+
+
+@login_required
 def myorders(request):
     user_id = request.user.id
     myorders = Order.objects.filter(EID=user_id)
-    #order_ids = [Order.OID for item in myorders]
-    #myquotes = Quote.objects.filter(OID=[Order.OID for item in myorders])
-    #might need to add EID to each quote unless Cameron can get the query working
     myquotes = Quote.objects.all()
-
     return render(request, 'main/myorders.html', {'myorders': myorders, 'myquotes': myquotes})
 
 # @login_required

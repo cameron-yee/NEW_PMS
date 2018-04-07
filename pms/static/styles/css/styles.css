@@ -20,3 +20,6 @@ a {
   a:hover {
     color: #fefefe;
     text-decoration: none; }
+
+.active {
+  color: black; }
