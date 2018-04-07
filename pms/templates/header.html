@@ -1,18 +1,26 @@
 {% load staticfiles %}
+{% load static %}
+
+{% if user.is_authenticated %}
 
 <div class="jumbotron jumbotron-fluid" style="padding-bottom: 0;">
   <div class="container" style="color: black;">
       <div class="row">
-          <!-- <div class="col-2" style="background: white;">
-              <img src="{% static 'images/AM.png' %}" style="width: 100%;" alt="Allied Mountain Logo"/>
-          </div> -->
+          <div class="col-2" style="background: rgba(59, 58, 58, 0);">
+              <img src="{% static 'images/logo.jpg' %}" style="width:60%; float: right;" alt="Allied Mountain Logo"/>
+          </div>
           <div class="col-10">
               <h1 class="display-4">Allied Mountain PMS</h1>
               <p class="lead">Track and place order requests</p>
+
           </div>
       </div>
   </div> 
-  {% if user.is_authenticated %}
+  <p class="text-dark" style="float: right; width:60; margin-right: 30px;">
+      Welcome, {{ user.get_short_name }}!  
+  </p>
+<br>
+<br>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
@@ -51,9 +59,7 @@
       <!--<div>
         <button id="logout" class="btn btn-warning"><a href="/logout">Sign Out</a></button>
       </div>-->
-      <a href="/logout" class="btn btn-warning btn-md">
-          <span class="glyphicon glyphicon-log-out"></span> Sign out
-        </a>
+      <a href="/logout" class="btn btn-warning" style="margin-left: 15px">Sign out</a>
     </div>
   </nav>
   {% endif %}

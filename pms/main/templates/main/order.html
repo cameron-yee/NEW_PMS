@@ -9,16 +9,16 @@
                     <div class="row">
                         <div class="col-lg-2">
                                 {% bootstrap_field purchase_form.orderDate %} 
+                                {% bootstrap_field purchase_form.CID %}
                         </div>
                         <div class="col-lg-2">
                                 {% bootstrap_field purchase_form.productName %}
-                                {% bootstrap_field quote_form.QPrice %}
                                 {% bootstrap_field purchase_form.productDescription %}
-                                {% bootstrap_field purchase_form.quantity %}   
+                                {% bootstrap_field quote_form.Supplier %}                       
                         </div>
                         <div class="col-lg-3">
-                                {% bootstrap_field purchase_form.CID %}
-                                {% bootstrap_field quote_form.Supplier %}                       
+                                {% bootstrap_field quote_form.QPrice %}
+                                {% bootstrap_field purchase_form.quantity %}   
                                 {% bootstrap_field quote_form.QLink %}
                         </div>
                         <div class="col-lg-3">
@@ -31,9 +31,9 @@
                                 {% bootstrap_field purchase_form.city %}
                                 {% bootstrap_field purchase_form.state %}
                                 {% bootstrap_field purchase_form.zipCode %}
-                                <br><br>
+                                <br>
                                 <button type="reset" value="Clear" class="btn btn-danger">Reset</button>
-                                <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" value="Submit" class="btn btn-primary" style="float: right;">Submit</button>
                         </div>
                     </div>
                     <!--{% bootstrap_form purchase_form %}

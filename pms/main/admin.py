@@ -29,7 +29,7 @@ class OrderAdmin(admin.ModelAdmin):
         return False
 
 class QuoteAdmin(admin.ModelAdmin):
-    list_display = ['OID', 'QPrice', 'Supplier']
+    list_display = ['QID', 'Supplier', 'QPrice', 'OID']
     def has_add_permission(self, request):
         return False
 

@@ -57,6 +57,13 @@ class Order(models.Model):
     __original_approved_value = False
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
+    def delete(self):
+        contract_type = Contract.objects.get(CName=self.CID)
+        if self.dateApproved != None:
+            contract_type.remainingBudget = contract_type.remainingBudget + self.total
+            contract_type.save()
+        super(Order, self).delete()
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         req_user = User.objects.get(username=self.EID) #gets the users information that requested the order 
         contract_type = Contract.objects.get(CName=self.CID) #gets the contract that the order belongs to
@@ -67,7 +74,7 @@ class Order(models.Model):
                 self.dateApproved = None #resets the dateApproved field to empty
             send_mail(
                 'PURCHASE ORDER #{} CONFIRMATION'.format(self.OID),
-                'Hi {},\n\nYour recent purchase order #{} request for item: "{}" has been denied.\n\nAM Purchase Management System'.format(req_user.first_name, self.OID, self.productName),
+                'Hi {},\n\nYour recent purchase order #{} request for item: "{}" has been denied.\n\n\nAM Purchase Management System'.format(req_user.first_name, self.OID, self.productName),
                 'yee.camero23@gmail.com', #Make info@system.com email
                 [req_user.email], #gets the email from the user that requested the item
                 fail_silently=False,
@@ -77,8 +84,8 @@ class Order(models.Model):
             contract_type.save() #saves the contract model to show the new remainingBudget
             self.dateApproved = datetime.now() #sets the approved date to now
             send_mail(
-                'PURCHASE ORDER {} CONFIRMATION'.format(self.OID),
-                'Hi {},\n\nYour recent purchase order #{} request for item: "{}" has been Approved.\n\n\nAM Purchase Management System'.format(req_user.first_name, self.OID, self.productName),
+                'PURCHASE ORDER #{} CONFIRMATION'.format(self.OID),
+                'Hi {},\n\nYour recent purchase order #{} request for item: "{}" has been approved.\n\n\nAM Purchase Management System'.format(req_user.first_name, self.OID, self.productName),
                 'yee.camero23@gmail.com', #Make info@system.com email
                 [req_user.email],
                 fail_silently=False,
