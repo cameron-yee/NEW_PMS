@@ -219,27 +219,45 @@ def generateorderreport(request):
 
         def PDFGen(contracts, orders):
             def writePDF(contracts, orders, c):
-                x = 100
-                y = 685
-                z = 670
+                x = 90
+                y = 720
+                z = 700
                 c.setFont("Helvetica", 28)
-                c.drawString(150, 780, 'Monthly Spending Report')
-                c.setFont("Helvetica", 16)
-                c.drawString(175, 755, 'For dates ' + start_Date + ' - ' + end_Date)
+                c.drawString(190, 780, 'Spending Report')
+                c.setFont("Helvetica", 12)
+                c.drawString(190, 755, 'For dates ' + start_Date + ' through ' + end_Date)
 
                 date = str(datetime.today().strftime('%m-%d-%Y'))
                 c.drawString(485, 820, date)
-                c.drawString(100, 700, user)
-
+                c.drawString(30, 820, 'Allied Mountain')
                 for contract in contracts:
-                    c.setFont("Helvetica", 16)
-                    c.drawString(x, y, 'Contract: ' + contract.CName)
+                    running_total = 0
+                    c.setFont("Helvetica", 20)
+                    c.drawString(x - 50, y, 'Contract: ' + contract.CName)
                     c.setFont("Helvetica", 12)
+                    c.drawString(x - 5, z, 'Budget: $' + str(contract.CBudget))
+                    z -= 20
+                    c.drawString(x - 5, z, 'Date Approved' + '     Item' + '                 Quantity ' + '             Price' + '                Order Total')
+                    z -= 2
+                    c.drawString(x - 9, z, '_______________________________________________________________')
+
+                    z -= 15
                     for order in orders.filter(CID=contract.CID, dateApproved__range=(start_Date, end_Date)):
-                        c.drawString(x + 10, z, str(order.dateApproved) + ' ' + order.productName + ' ' + str(order.quantity) + ' ' + str(order.total/order.quantity) + ' ' + str(order.total))
-                        z -= 15
+                        c.drawString(x, z, str(order.dateApproved.strftime('%m-%d-%Y')))
+                        c.drawString(x + 91, z, order.productName)
+                        c.drawString(x + 191, z, str(order.quantity))
+                        c.drawString(x + 261, z, str(order.total/order.quantity))
+                        c.drawString(x + 356, z, '$' + str(order.total))
+                        z -= 20
+                        running_total += order.total
                     y = z - 10
-                    z = y - 15
+                    z = y - 10
+                    c.drawString(x - 9, z + 25, '_______________________________________________________________')
+                    c.setFont("Helvetica-Bold", 12)
+                    c.drawString(342, z + 5, 'Spending Total: $' + str(running_total))
+                    y = z - 30
+                    z = y - 20
+
 
                 # c.drawString(100,100, "Hello World")
 
