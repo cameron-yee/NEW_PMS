@@ -124,7 +124,7 @@ def order(request):
     return render(request, 'main/order.html', {'purchase_form': purchase_form, 'quote_form': quote_form})
 
 @login_required
-def quote(request):
+def quotes(request):
     selected_order = Order.objects.get(OID=request.session['selected_order'])
     #MIGHT NEED TO CLOSE SESSIONS
 
@@ -135,11 +135,17 @@ def quote(request):
         if quote_form2.is_valid():
             finished_quote_form2 = quote_form2.save(commit=False)
             finished_quote_form2.OID = selected_order
+            finished_quote_form2.Supplier = quote_form2.cleaned_data['Supplier']
+            finished_quote_form2.QPrice = quote_form2.cleaned_data['QPrice'] 
+            finished_quote_form2.QLink = quote_form2.cleaned_data['QLink']
             saved_quote2 = finished_quote_form2.save()
         
         if quote_form3.is_valid():
             finished_quote_form3 = quote_form3.save(commit=False)
             finished_quote_form3.OID = selected_order
+            finished_quote_form3.Supplier = quote_form3.cleaned_data['Supplier']
+            finished_quote_form3.QPrice = quote_form3.cleaned_data['QPrice'] 
+            finished_quote_form3.QLink = quote_form3.cleaned_data['QLink']
             saved_quote3 = finished_quote_form3.save()
 
             send_mail(
@@ -182,8 +188,11 @@ def employee_spending(request):
 @login_required
 def myorders(request):
     user_id = request.user.id
-    myquoteorders = Quote.objects.all().values('OID', 'QID','QLink', 'QPrice', 'Supplier', 'order__OID', 'order__productName', 'order__productDescription', 'order__quantity', 'order__total', 'order__dateApproved').filter(order__EID=user_id)
-    return render(request, 'main/myorders.html', {'myquoteorders': myquoteorders})
+    orders = Order.objects.all()
+    print(orders)
+    myquoteorders = Order.objects.all().values('quoteorder__OID', 'quoteorder__QID','quoteorder__QLink', 'quoteorder__QPrice', 'quoteorder__Supplier', 'OID', 'productName', 'productDescription', 'quantity', 'total', 'dateApproved').filter(EID=user_id)
+    print(myquoteorders)
+    return render(request, 'main/myorders.html', {'orders': orders, 'myquoteorders': myquoteorders})
 
 # @login_required
 # def allorders(request):

@@ -1,0 +1,9 @@
+a {
+    color: inherit;
+    text-decoration: none;
+    
+    &:hover {
+        color: darken(white, .5);
+        text-decoration: none;
+    }
+}

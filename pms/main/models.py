@@ -10,7 +10,7 @@ from datetime import datetime
 # Create your models here.
 class Quote(models.Model):
     QID = models.AutoField(primary_key=True, verbose_name= 'quote ID')
-    OID = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='+', verbose_name= 'order ID')
+    OID = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='quoteorder', verbose_name= 'order ID')
     QLink = models.CharField(max_length=1000, verbose_name= 'website Link')
     QPrice = models.DecimalField(max_digits=15, decimal_places=2, null=True, verbose_name= 'item Price')
     Supplier = models.CharField(max_length=30)

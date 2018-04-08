@@ -16,32 +16,48 @@
                             <th>Date Approved</th>
                             <th>Quotes</th>
                         </tr>
-                {% for quoteorder in myquoteorders %}
+                {% for order in orders %}
                         <div id="accordion" style="display: none;">
                             <div class="card">
                             <div class="card-header" id="headingOne">
                                 <tr>
-                                    <td>{{ quoteorder.order__OID }}</td>
-                                    <td>{{ quoteorder.order__productName }}</td>
-                                    <td>{{ quoteorder.order__productDescription }}</td>
-                                    <td>{{ quoteorder.order__quantity }}</td>
-                                    <td>{{ quoteorder.order__total }}</td>
-                                    <td>{{ quoteorder.order__dateApproved }}</td>
+                                    <td>{{ order.OID }}</td>
+                                    <td>{{ order.productName }}</td>
+                                    <td>{{ order.productDescription }}</td>
+                                    <td>{{ order.quantity }}</td>
+                                    <td>{{ order.total }}</td>
+                                    <td>{{ order.dateApproved }}</td>
                                     <td>
                                         <h5 class="mb-0">
-                                            <button class="btn btn-info btn-sm collapsed" data-toggle="collapse" data-target="#collapse{{ forloop.counter0 }}" aria-expanded="false" aria-controls="collapseOne">
+                                            <button id="quote-button-{{ forloop.counter0 }}" onClick="toggleQuoteRow(this.id)" class="btn btn-info btn-sm collapsed" data-toggle="collapse" data-target="#collapse{{ forloop.counter0 }}" aria-expanded="false" aria-controls="collapseOne">
                                                 See Quotes 
                                             </button>
                                         </h5>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td colspan="7">
+                                <tr id="quote-row-{{ forloop.counter0 }}" class="hidden">
+                                    <td colspan="7" class="nested-td">
                                         <div id="collapse{{ forloop.counter0 }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                                             <div class="card-body">
-                                                <p>Supplier: {{ quoteorder.Supplier }}</p>
-                                                <p>Price: {{ quoteorder.QPrice }}</p>
-                                                <p>Link: {{ quoteorder.QLink }}</p>
+                                                <h1>Quotes for Order ID: {{ order.OID }}</h1>
+                                                <table class="nested-table table-dark">
+                                                    <tr>
+                                                        <th>QID</th>
+                                                        <th>Supplier</th>
+                                                        <th>Price</th>
+                                                        <th>Link</th>
+                                                    </tr>
+                                                {% for q in myquoteorders %}
+                                                    {% if q.OID == order.OID %}
+                                                        <tr>
+                                                            <td>{{ q.quoteorder__QID }}</td>
+                                                            <td>{{ q.quoteorder__Supplier }}</td>
+                                                            <td>{{ q.quoteorder__QPrice }}</td>
+                                                            <td>{{ q.quoteorder__QLink }}</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                </table>
                                             </div>
                                         </div>
                                     </td>
