@@ -53,21 +53,19 @@ class Order(models.Model):
     isDenied = models.BooleanField(default=False, verbose_name= 'Denied')
     isApproved = models.BooleanField(default=False, verbose_name= 'Approved')
 
-    __original_denied_value = False
-    __original_approved_value = False
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
     def delete(self):
         contract_type = Contract.objects.get(CName=self.CID)
-        if self.dateApproved != None:
-            contract_type.remainingBudget = contract_type.remainingBudget + self.total
-            contract_type.save()
+        if self.dateApproved != None: #if order is currently approved and is linked to a contract, before it is deleted, the amount of this order is taken out of this contract
+            contract_type.remainingBudget = contract_type.remainingBudget + self.total #adds order amount back to the corresponding contracts remaining budget
+            contract_type.save() #saves the contract model
         super(Order, self).delete()
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         req_user = User.objects.get(username=self.EID) #gets the users information that requested the order 
         contract_type = Contract.objects.get(CName=self.CID) #gets the contract that the order belongs to
-        if self.isDenied != self.__original_denied_value:
+        if (self.isDenied == True) and (self.isApproved == False) and (self.isPending == False):
             if self.dateApproved != None: #checks if model has an approved date, if it does, then it adds total back to contract remainingBudget
                 contract_type.remainingBudget = contract_type.remainingBudget + self.total #readds the total that was previously taken away from contract remainingBudget
                 contract_type.save() #saves the contract model and readds the total the was previously taken away
@@ -79,7 +77,7 @@ class Order(models.Model):
                 [req_user.email], #gets the email from the user that requested the item
                 fail_silently=False,
             )
-        if self.isApproved != self.__original_approved_value:
+        elif (self.isApproved == True) and (self.isDenied == False) and (self.isPending == False):
             contract_type.remainingBudget = contract_type.remainingBudget - self.total #subtracts the total from the remainingBudget
             contract_type.save() #saves the contract model to show the new remainingBudget
             self.dateApproved = datetime.now() #sets the approved date to now
@@ -90,9 +88,11 @@ class Order(models.Model):
                 [req_user.email],
                 fail_silently=False,
             )
+        else:
+            self.isApproved = False
+            self.isDenied = False
+            self.isPending = True
         super(Order, self).save(force_insert, force_update, *args, **kwargs)
-        self.__original_denied_value = self.isDenied
-        self.__original_approved_value = self.isApproved
 
     def __str__(self):
         return '#{}'.format(self.OID)
