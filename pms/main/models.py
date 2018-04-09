@@ -22,9 +22,20 @@ class Contract(models.Model):
     remainingBudget = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='remaining Budget') 
     CStart = models.DateField(verbose_name= 'contract Start Date')
     CEnd = models.DateField(null=True, verbose_name= 'contract End Date')
+
+    __original_budget = None
+    __original_remainingBudget = None
+    def __init__(self, *args, **kwargs):
+        super(Contract, self).__init__(*args, **kwargs)
+        self.__original_budget = self.CBudget
+        self.__original_remainingBudget = self.remainingBudget
+
     def save(self, *args, **kwargs):
         if self.remainingBudget is None:
             self.remainingBudget = self.CBudget
+        if self.CBudget != self.__original_budget:
+            total = self.__original_budget - self.__original_remainingBudget
+            self.remainingBudget = self.CBudget - total
         super(Contract, self).save(*args, **kwargs)
 
     def __str__(self):
