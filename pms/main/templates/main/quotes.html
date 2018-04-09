@@ -4,27 +4,20 @@
 
 {% block content %}
     <div class="container">
-                <form id="quotes-form" method="POST" action={% url 'quotes' %}>
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-lg-6">
-                                <h3>Quote 2</h3>
-                                {% bootstrap_field quote_form2.Supplier %}
-                                {% bootstrap_field quote_form2.QLink %}
-                                {% bootstrap_field quote_form2.QPrice %}
-                        </div>           
-                        <div class="col-lg-6" style="float: right;">
-                                <h3>Quote 3</h3>             
-                                {% bootstrap_field quote_form3.Supplier %}
-                                {% bootstrap_field quote_form3.QLink %}
-                                {% bootstrap_field quote_form3.QPrice %}
-                                <button type="submit" value="Submit" class="btn btn-primary" style="float: right;">Submit</button>
-                                <button type="reset" value="Clear" class="btn btn-danger" style="float: right; margin-right: 12px;">Reset</button>
-                        </div>
-                        <div class="col-lg-1">
-
-                        </div>
-                    </div>
-                </form>
+        <form id="quotes-form" method="POST" action={% url 'quotes' %}>
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-6" style="float: left;">
+                        <h3>Quote 2</h3>
+                        {% bootstrap_form quote_form2 %}
+                </div>           
+                <div class="col-lg-6" style="float: right;">
+                        <h3>Quote 3</h3>             
+                        {% bootstrap_form quote_form3 %}
+                </div>
+            </div>
+            <button type="submit" value="Submit" class="btn btn-primary" style="float: right;">Submit</button>
+            <button type="reset" value="Clear" class="btn btn-danger" style="float: right; margin-right: 12px;">Reset</button>
+        </form>
     </div>
 {% endblock content %}

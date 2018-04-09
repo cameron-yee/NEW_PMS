@@ -38,7 +38,6 @@ class QuoteForm(ModelForm):
     class Meta:
         model = models.Quote
         fields = ('Supplier', 'QPrice', 'QLink')
-
     def __init__(self, *args, **kwargs): 
         super(QuoteForm, self).__init__(*args, **kwargs)
         self.fields['QPrice'].widget.attrs['min'] = 0.01 #sets the minimum allowable price to 0.01

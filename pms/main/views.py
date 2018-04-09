@@ -53,8 +53,6 @@ def order(request):
     if request.method == "POST":
         purchase_form = PurchaseOrderForm(request.POST)
         quote_form = QuoteForm(request.POST)
-        quote_form_2 = QuoteForm(request.POST)
-        quote_form_3 = QuoteForm(request.POST)
         price = 0
         quantity = 0.0
         saved_quote = 0
@@ -118,19 +116,16 @@ def order(request):
 @login_required
 def quote(request):
     selected_order = Order.objects.get(OID=request.session['selected_order'])
-    #MIGHT NEED TO CLOSE SESSIONS
 
     if request.method == "POST":
-        quote_form2 = QuoteForm(request.POST)
-        quote_form3 = QuoteForm(request.POST)
+        quote_form2 = QuoteForm(request.POST, prefix="quote_form2")
+        quote_form3 = QuoteForm(request.POST, prefix="quote_form3")
         user_email = request.user.email
-        if quote_form2.is_valid():
+        if quote_form2.is_valid() and quote_form3.is_valid():
             finished_quote_form2 = quote_form2.save(commit=False)
+            finished_quote_form3 = quote_form3.save(commit=False)
             finished_quote_form2.OID = selected_order
             saved_quote2 = finished_quote_form2.save()
-        
-        if quote_form3.is_valid():
-            finished_quote_form3 = quote_form3.save(commit=False)
             finished_quote_form3.OID = selected_order
             saved_quote3 = finished_quote_form3.save()
 
@@ -142,10 +137,9 @@ def quote(request):
                 fail_silently=False,
             )
         return HttpResponseRedirect('/')
-            
     else:
-        quote_form2 = QuoteForm()
-        quote_form3 = QuoteForm()        
+        quote_form2 = QuoteForm(prefix="quote_form2")
+        quote_form3 = QuoteForm(prefix="quote_form3")        
     return render(request, 'main/quotes.html', {'quote_form2': quote_form2, 'quote_form3': quote_form3})
     
 
