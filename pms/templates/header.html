@@ -25,26 +25,26 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="http://127.0.0.1:8000/">Home</a> <!--<span class="sr-only">(current)</span>-->
+          <a id="-tab" class="nav-link" href="http://127.0.0.1:8000/">Home</a> <!--<span class="sr-only">(current)</span>-->
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="http://127.0.0.1:8000/main/order">Order</a>
+          <a id="order-tab" class="nav-link" href="http://127.0.0.1:8000/main/order">Order</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="http://127.0.0.1:8000/main/contract">Contracts</a>
+          <a id="contract-tab" class="nav-link" href="http://127.0.0.1:8000/main/contract">Contracts</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="http://127.0.0.1:8000/main/myorders">My Orders</a>
+          <a id="myorders-tab" class="nav-link" href="http://127.0.0.1:8000/main/myorders">My Orders</a>
         </li>
       </ul>
 
         <ul class="navbar-nav mr-auto" style="display: flex; float: right; margin-right: 0 !important;">
           {% if user.is_superuser %}
           <li class="nav-item">
-            <a class="nav-link" href="http://127.0.0.1:8000/main/reports">Reports</a>
+            <a id="reports-tab" class="nav-link" href="http://127.0.0.1:8000/main/reports">Reports</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="http://127.0.0.1:8000/main/employee-spending">Employee Spending</a>
+            <a id="employee-spending-tab" class="nav-link" href="http://127.0.0.1:8000/main/employee-spending">Employee Spending</a>
           </li>
           {% endif %}
           {% if user.is_staff %}
