@@ -33,9 +33,9 @@ class Contract(models.Model):
     def save(self, *args, **kwargs):
         if self.remainingBudget is None:
             self.remainingBudget = self.CBudget
-        if self.CBudget != self.__original_budget:
-            total = self.__original_budget - self.__original_remainingBudget
-            self.remainingBudget = self.CBudget - total
+        # if self.CBudget != self.__original_budget:
+        #     total = self.__original_budget - self.__original_remainingBudget
+        #     self.remainingBudget = self.CBudget - total
         super(Contract, self).save(*args, **kwargs)
 
     def __str__(self):
