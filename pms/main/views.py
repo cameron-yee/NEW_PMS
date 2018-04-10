@@ -99,8 +99,8 @@ def order(request):
                     return HttpResponseRedirect('/main/quotes')
             else:
                 send_mail(
-                    'PURCHASE ORDER #{} CONFIRMATION'.format(self.OID),
-                    'Hi {},\n\nYour purchase order #{} request for item: "{}" has been received. Management will get back to you after reviewing the quote.\n\n\nPurchase Management System'.format(request.user.first_name, self.OID, self.productName),
+                    'PURCHASE ORDER #{} CONFIRMATION'.format(finished_purchase_form.OID),
+                    'Hi {},\n\nYour purchase order #{} request for item: "{}" has been received. Management will get back to you after reviewing the quote.\n\n\nPurchase Management System'.format(request.user.first_name, finished_purchase_form.OID, finished_purchase_form.productName),
                     'yee.camero23@gmail.com', #Make info@system.com email
                     [user_email],
                     fail_silently=False,

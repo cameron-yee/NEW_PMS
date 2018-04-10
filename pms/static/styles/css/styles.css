@@ -23,6 +23,7 @@ a {
 
 body {
   background: black;
+  background-image: url("../../images/bck.jpeg");
   color: white; }
 
 #login {

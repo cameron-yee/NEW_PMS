@@ -1,13 +1,16 @@
 {% extends "layout.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block content %}
-    <div class="container">
+    <div class="container bck">
         <div class="row">
             <div class="col-12">
-                    <a href="https://www.accuweather.com/en/us/colorado-springs-co/80903/current-weather/327351" class="aw-widget-legal">
-                        </a><div id="awtd1523076578678" class="aw-widget-36hour" align="center" data-locationkey="327351" data-unit="f" data-language="en-us" data-useip="false" data-uid="awtd1523076578678" data-editlocation="true"></div><script type="text/javascript" src="https://oap.accuweather.com/launch.js" ></script>            </div>
-<!--                         <iframe src="https://weatherfor.us/widget?" scrolling="no" frameborder="0" allowtransparency="true" style="background: transparent; margin-left: 90px; width: 720px; height: 250px; overflow: hidden;"></iframe>
- -->        </div>
+                <h1>Welcome to the Purchase Management System</h1>
+                <p>
+                Our project purchasing system allows employees to submit purchase order forms. It filters orders based on 3 price-tier levels, and sends notifications to the appropriate people. If the order item is less than $ 50 then no approval is needed, if the item is in the range from $50-500 then, Brian will approve it, and if it is more than $500, then Bill will approve the ordered item.  The system tracks how much budget has been spent, and how much remains. Our database will also store all records so they can be reviewed at any time. Ideally, this site will be hosted on Microsoft Azure and with a PostgreSQL database.  The site is built on Django, which is a Python MTV web framework.
+                    
+                </p>
+                <p>We hope you enjoy the new system.</p>
+            </div>
     </div>
 {% endblock content %}
