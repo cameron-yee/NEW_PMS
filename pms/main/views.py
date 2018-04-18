@@ -173,9 +173,7 @@ def employee_spending(request):
 def myorders(request):
     user_id = request.user.id
     orders = Order.objects.all()
-    print(orders)
     myquoteorders = Order.objects.all().values('quoteorder__OID', 'quoteorder__QID','quoteorder__QLink', 'quoteorder__QPrice', 'quoteorder__Supplier', 'OID', 'productName', 'productDescription', 'quantity', 'total', 'dateApproved').filter(EID=user_id)
-    print(myquoteorders)
     return render(request, 'main/myorders.html', {'orders': orders, 'myquoteorders': myquoteorders})
 
 # @login_required

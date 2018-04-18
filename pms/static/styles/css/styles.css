@@ -21,9 +21,18 @@ a {
 .show {
   display: table-row; }
 
+#site-name {
+  color: orange; }
+
+#header {
+  background-color: black; }
+
+.breadcrumbs {
+  background-color: gray !important;
+  color: orange !important; }
+
 body {
   background: black;
-  background-image: url("../../images/bck.jpeg");
   color: white; }
 
 #login {
