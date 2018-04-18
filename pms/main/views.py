@@ -13,7 +13,6 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from io import BytesIO
 
-last_OID = None
 
 #view to generate home page
 @login_required
@@ -66,15 +65,14 @@ def order(request):
 
                 quantity = purchase_form.cleaned_data['quantity']
 
-                def calcTotal(price, quantity):
+                def calcTotal(price, quantity): #function calculates a total price
                     total = price * quantity
                     return total
 
-                finished_purchase_form.total = calcTotal(price, quantity)
-                finished_purchase_form.EID = request.user
+                finished_purchase_form.total = calcTotal(price, quantity) #sets the total price into the order
+                finished_purchase_form.EID = request.user #sets the user EID into the order
 
-                finished_purchase_form.save()
-                last_OID = finished_purchase_form.OID
+                finished_purchase_form.save() #saves the order form
 
             finished_quote_form.OID = finished_purchase_form
             finished_quote_form.save()

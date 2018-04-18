@@ -63,6 +63,8 @@ class Order(models.Model):
     isPending = models.BooleanField(default=True, verbose_name= 'Pending')
     isDenied = models.BooleanField(default=False, verbose_name= 'Denied')
     isApproved = models.BooleanField(default=False, verbose_name= 'Approved')
+    comments = models.CharField(max_length=2500)
+
 
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)

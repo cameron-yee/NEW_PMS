@@ -18,13 +18,16 @@
 
 from django.contrib import admin
 from .models import Order, Contract, Quote
+from django.forms import ValidationError
 
 class ContractAdmin(admin.ModelAdmin):
     list_display = ['CName', 'CBudget', 'remainingBudget', 'CStart', 'CEnd']
     exclude = ['remainingBudget',] #list of fields to exclude from the Django add function
 
+
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['OID', 'EID', 'CID', 'productName', 'total', 'orderDate', 'QID', 'isPending', 'isApproved', 'isDenied']
+    list_display = ['OID', 'EID', 'CID', 'productName', 'total', 'orderDate', 'QID', 'isPending', 'isApproved', 'isDenied', 'comments']
+    readonly_fields = ('EID', 'orderDate')
     def has_add_permission(self, request):
         return False
 
