@@ -20,10 +20,22 @@ from django.contrib import admin
 from .models import Order, Contract, Quote
 
 class ContractAdmin(admin.ModelAdmin):
+    class Media:
+        js = ("/static/js/script.js",)
+        # css = {
+        #     'all': ("/static/styles/css/styles.css",)
+        # }
+
     list_display = ['CName', 'CBudget', 'remainingBudget', 'CStart', 'CEnd']
     exclude = ['remainingBudget',] #list of fields to exclude from the Django add function
 
 class OrderAdmin(admin.ModelAdmin):
+    class Media:
+        js = ("/static/js/script.js",)
+        # css = {
+        #     'all': ("/static/styles/css/styles.css",)
+        # }
+
     list_display = ['OID', 'EID', 'CID', 'productName', 'total', 'orderDate', 'QID', 'isPending', 'isApproved', 'isDenied']
     def has_add_permission(self, request):
         return False

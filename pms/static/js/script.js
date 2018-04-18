@@ -25,6 +25,77 @@ let toggleQuoteRow = (clicked_id) => {
     } else {
         quote_row.className = 'hidden';
     }
-
-
 };
+
+
+orderStatusControl = () => {
+    try {
+        let id_isApproved = document.getElementById('id_isApproved');
+        let id_isPending = document.getElementById('id_isPending');
+        let id_isDenied = document.getElementById('id_isDenied');
+
+        let updateApproved = () => {
+            id_isApproved.checked = true;
+            id_isDenied.checked = false;
+            id_isPending.checked = false;
+        };
+
+        let updatePending = () => {
+            id_isApproved.checked = false;
+            id_isDenied.checked = false;
+            id_isPending.checked = true;
+        };
+
+        let updateDenied = () => {
+            id_isApproved.checked = false;
+            id_isDenied.checked = true;
+            id_isPending.checked = false;
+        };
+
+        id_isApproved.addEventListener("click", updateApproved);
+        id_isPending.addEventListener("click", updatePending);
+        id_isDenied.addEventListener("click", updateDenied);
+    } catch(TypeError){
+        console.log('Not on order page');
+    }
+};
+
+//JANKY, this is not a good long-term solution
+preventNegativeBudget = () => {
+    let id_CBudget = document.getElementById('id_CBudget');
+    
+    let prevent = () => {
+        if(id_CBudget.value < 0) {
+            id_CBudget.value = 0;
+            alert("NOTICE: Budget must be greater than 0.");
+        }
+    };
+
+    setInterval(prevent, 300);
+};
+
+window.onload = callFunctions = () => {
+    orderStatusControl();
+    preventNegativeBudget();
+};
+
+
+    // let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+
+    // let element = document.querySelector(id_isApproved);
+
+    // setTimeout(function() {
+    //     element.setAttribute('checked', 'false');
+    // }, 5000)
+
+    // let observer = new MutationObserver(function(mutations) {
+    // mutations.forEach(function(mutation) {
+    //     if (mutation.type == "attributes") {
+    //     console.log("attributes changed")
+    //     }
+    // });
+    // });
+
+    // observer.observe(element, {
+    // attributes: true //configure it to listen to attribute changes
+    // });
