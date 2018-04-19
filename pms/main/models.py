@@ -41,7 +41,6 @@ class Contract(models.Model):
     def __str__(self):
         return '{}'.format(self.CName)
 
-
 class Order(models.Model):
     OID = models.AutoField(primary_key=True, verbose_name = 'order #')
     EID = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, verbose_name = 'employee ID')
@@ -63,7 +62,7 @@ class Order(models.Model):
     isPending = models.BooleanField(default=True, verbose_name= 'Pending')
     isDenied = models.BooleanField(default=False, verbose_name= 'Denied')
     isApproved = models.BooleanField(default=False, verbose_name= 'Approved')
-    comments = models.CharField(max_length=2500)
+    comments = models.CharField(max_length=2500, blank=True)
 
 
     def __init__(self, *args, **kwargs):

@@ -1,18 +1,18 @@
-from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.mail import send_mail, EmailMessage
-from django import forms
 from django.contrib.auth.decorators import login_required
-from .forms import * 
+from django.core.mail import send_mail, EmailMessage
 from django.contrib.auth.models import User
 from .models import Contract, Quote, Order
 from django.db.models import Sum, Count
-from datetime import datetime
-import os
-from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
+from django.shortcuts import render
+from datetime import datetime
+from django.contrib import messages
+from django import forms
 from io import BytesIO
-
+from .forms import * 
+import os
 
 #view to generate home page
 @login_required
@@ -58,26 +58,31 @@ def order(request):
 
         if quote_form.is_valid():
             finished_quote_form = quote_form.save(commit=False)
-            price = quote_form.cleaned_data['QPrice']
+            price = quote_form.cleaned_data['QPrice'] #grabs the price from the first quote and sets it as 'price'
 
-            if purchase_form.is_valid():
-                finished_purchase_form = purchase_form.save(commit=False)
-
-                quantity = purchase_form.cleaned_data['quantity']
+            if purchase_form.is_valid(): #checks to see if the form fields are valid
+                finished_purchase_form = purchase_form.save(commit=False) #changes the finished purchase form object name
+                contractName = str(purchase_form.cleaned_data['CID']) #gets the contract name from the order
+                order_contract = Contract.objects.get(CName=contractName) #gets the contract information that the order belongs to
+                contract_budget = order_contract.remainingBudget #sets contract_budget with the remaining budget from the contract related to this order
+                quantity = purchase_form.cleaned_data['quantity'] #sets 'quantity' variable as the quantity user requested
 
                 def calcTotal(price, quantity): #function calculates a total price
                     total = price * quantity
-                    return total
+                    return total #returns the 'total' variable with a numeric value
 
                 finished_purchase_form.total = calcTotal(price, quantity) #sets the total price into the order
                 finished_purchase_form.EID = request.user #sets the user EID into the order
 
-                finished_purchase_form.save() #saves the order form
+                if contract_budget < finished_purchase_form.total: #checks if order will exeed the remaining balance
+                    messages.info(request, 'Your order was not saved because the total amount was over the remaining budget for Contract: {}.'.format(contractName))
+                    return HttpResponseRedirect('/main/order') #redirects to other page and does not save the order or quote entered.
+            
+            finished_purchase_form.save() #saves the order form
+            finished_quote_form.OID = finished_purchase_form #sets the OID in the first quote
+            finished_quote_form.save() #saves the first quote that was given
 
-            finished_quote_form.OID = finished_purchase_form
-            finished_quote_form.save()
-
-            user_email = request.user.email
+            user_email = request.user.email #grabs the requesting users email
 
             if finished_purchase_form.total < 50:
                 current_purchase_form = finished_purchase_form 
@@ -90,12 +95,17 @@ def order(request):
                     current_purchase_form.isPending = False
                     current_purchase_form.isApproved = True
                     current_purchase_form.save()
-
                 setChosenQuote(current_purchase_form, current_quote)
+                messages.info(request, 'Your order was successfully submitted and approved.')
+
             elif finished_purchase_form.total >= 500:
-                    request.session['selected_order'] = finished_purchase_form.OID
-                    return HttpResponseRedirect('/main/quotes')
+                request.session['selected_order'] = finished_purchase_form.OID
+                return HttpResponseRedirect('/main/quotes')
             else:
+                current_purchase_form = finished_purchase_form
+                current_quote = finished_quote_form
+                current_purchase_form.QID = current_quote
+                current_purchase_form.save()
                 send_mail(
                     'PURCHASE ORDER #{} CONFIRMATION'.format(finished_purchase_form.OID),
                     'Hi {},\n\nYour purchase order #{} request for item: "{}" has been received. Management will get back to you after reviewing the quote.\n\n\nPurchase Management System'.format(request.user.first_name, finished_purchase_form.OID, finished_purchase_form.productName),
@@ -103,7 +113,7 @@ def order(request):
                     [user_email],
                     fail_silently=False,
                 )
-
+                messages.info(request, 'Your order was successfully submitted.')
             return HttpResponseRedirect('/')
             
     else:
@@ -140,18 +150,18 @@ def quotes(request):
                 [user_email],
                 fail_silently=False,
             )
+            messages.info(request, 'Your order was successfully submitted with the two extra quotes')
+
         return HttpResponseRedirect('/')
     else:
         quote_form2 = QuoteForm(prefix="quote_form2")
         quote_form3 = QuoteForm(prefix="quote_form3")        
     return render(request, 'main/quotes.html', {'quote_form2': quote_form2, 'quote_form3': quote_form3})
     
-
 @login_required
 def contract(request):
     contracts = Contract.objects.all()
     return render(request, 'main/contract.html', {'contracts': contracts})
-
 
 @login_required
 def employee_spending(request):
@@ -173,7 +183,9 @@ def employee_spending(request):
 def myorders(request):
     user_id = request.user.id
     orders = Order.objects.all()
+    print(orders)
     myquoteorders = Order.objects.all().values('quoteorder__OID', 'quoteorder__QID','quoteorder__QLink', 'quoteorder__QPrice', 'quoteorder__Supplier', 'OID', 'productName', 'productDescription', 'quantity', 'total', 'dateApproved').filter(EID=user_id)
+    print(myquoteorders)
     return render(request, 'main/myorders.html', {'orders': orders, 'myquoteorders': myquoteorders})
 
 # @login_required
@@ -187,7 +199,6 @@ def myorders(request):
 #     #might need to add EID to each quote unless Cameron can get the query working
 
 #     return render(request, 'main/allorders.html', {'allorders': allorders})
-
 
 @login_required
 def reports(request):
@@ -229,7 +240,12 @@ def generateorderreport(request):
                 date = str(datetime.today().strftime('%m-%d-%Y'))
                 c.drawString(485, 820, date)
                 c.drawString(30, 820, 'Allied Mountain')
+
                 for contract in contracts:
+                    if z < 70 or y < 70:
+                        c.showPage()
+                        z = 790
+                        y = 810
                     running_total = 0
                     c.setFont("Helvetica", 20)
                     c.drawString(x - 50, y, 'Contract: ' + contract.CName)
@@ -249,8 +265,15 @@ def generateorderreport(request):
                         c.drawString(x + 356, z, '$' + str(order.total))
                         z -= 20
                         running_total += order.total
+                        if z <= 15:
+                            c.showPage()
+                            z = 810
                     y = z - 10
                     z = y - 10
+                    if z < 15 or y < 15:
+                        c.showPage()
+                        z = 790
+                        y = 810
                     c.drawString(x - 9, z + 25, '_______________________________________________________________')
                     c.setFont("Helvetica-Bold", 12)
                     c.drawString(342, z + 5, 'Spending Total: $' + str(running_total))
@@ -290,7 +313,6 @@ def generateorderreport(request):
     else:
         form = DateForm()
         response #HttpResponseRedirect('/')
-
 
 # def report(request):
 #     pdf = request.session['pdf']

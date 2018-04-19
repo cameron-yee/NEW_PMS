@@ -29,26 +29,28 @@ class ContractAdmin(admin.ModelAdmin):
 
     list_display = ['CName', 'CBudget', 'remainingBudget', 'CStart', 'CEnd']
     exclude = ['remainingBudget',] #list of fields to exclude from the Django add function
+    def get_readonly_fields(self, request, obj=None):
+        if obj: #This is the case when obj is already created i.e. it's an edit
+            return ['CBudget', 'remainingBudget']
+        else:
+            return []
 
 
 class OrderAdmin(admin.ModelAdmin):
-<<<<<<< HEAD
-    list_display = ['OID', 'EID', 'CID', 'productName', 'total', 'orderDate', 'QID', 'isPending', 'isApproved', 'isDenied', 'comments']
-    readonly_fields = ('EID', 'orderDate')
-=======
     class Media:
         js = ("/static/js/script.js",)
         # css = {
         #     'all': ("/static/styles/css/styles.css",)
         # }
-
+    readonly_fields = ('OID', 'EID', 'orderDate')
     list_display = ['OID', 'EID', 'CID', 'productName', 'total', 'orderDate', 'QID', 'isPending', 'isApproved', 'isDenied']
->>>>>>> d2d6fc9f58e53fb9b04ad988046d5bb45a18a24f
+
     def has_add_permission(self, request):
         return False
 
 class QuoteAdmin(admin.ModelAdmin):
     list_display = ['QID', 'Supplier', 'QPrice', 'OID']
+    readonly_fields = ['OID']
     def has_add_permission(self, request):
         return False
 
