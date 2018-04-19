@@ -18,18 +18,39 @@
 
 from django.contrib import admin
 from .models import Order, Contract, Quote
+from django.forms import ValidationError
 
 class ContractAdmin(admin.ModelAdmin):
+    class Media:
+        js = ("/static/js/script.js",)
+        # css = {
+        #     'all': ("/static/styles/css/styles.css",)
+        # }
+
     list_display = ['CName', 'CBudget', 'remainingBudget', 'CStart', 'CEnd']
     exclude = ['remainingBudget',] #list of fields to exclude from the Django add function
+    def get_readonly_fields(self, request, obj=None):
+        if obj: #This is the case when obj is already created i.e. it's an edit
+            return ['CBudget', 'remainingBudget']
+        else:
+            return []
+
 
 class OrderAdmin(admin.ModelAdmin):
+    class Media:
+        js = ("/static/js/script.js",)
+        # css = {
+        #     'all': ("/static/styles/css/styles.css",)
+        # }
+    readonly_fields = ('OID', 'EID', 'orderDate')
     list_display = ['OID', 'EID', 'CID', 'productName', 'total', 'orderDate', 'QID', 'isPending', 'isApproved', 'isDenied']
+
     def has_add_permission(self, request):
         return False
 
 class QuoteAdmin(admin.ModelAdmin):
     list_display = ['QID', 'Supplier', 'QPrice', 'OID']
+    readonly_fields = ['OID']
     def has_add_permission(self, request):
         return False
 
