@@ -13,7 +13,7 @@ class Quote(models.Model):
     QPrice = models.DecimalField(max_digits=15, decimal_places=2, null=True, verbose_name= 'item Price')
     Supplier = models.CharField(max_length=30)
     def __str__(self):
-        return 'QID: {} {}'.format(self.QID, self.Supplier)
+        return 'QID: {} {}'.format(self.QID, self.Supplier) #sets the object name as the QID number and supplier in the format for example: "QID: 2 Target"
 
 class Contract(models.Model):
     CID = models.AutoField(primary_key=True, verbose_name= 'contract ID')
@@ -39,7 +39,7 @@ class Contract(models.Model):
         super(Contract, self).save(*args, **kwargs)
 
     def __str__(self):
-        return '{}'.format(self.CName)
+        return '{}'.format(self.CName) #sets the object name as the name of the Contract
 
 class Order(models.Model):
     OID = models.AutoField(primary_key=True, verbose_name = 'order #')
@@ -107,4 +107,4 @@ class Order(models.Model):
         super(Order, self).save(force_insert, force_update, *args, **kwargs)
 
     def __str__(self):
-        return '#{}'.format(self.OID)
+        return '#{}'.format(self.OID) #sets the object name as the Order number
