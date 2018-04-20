@@ -48,6 +48,17 @@ class OrderAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+    form_OID = None
+    def get_form(self, request, obj=None, **kwargs):
+        if obj:
+            self.form_OID = obj.OID
+        return super(OrderAdmin, self).get_form(request, obj, **kwargs)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "QID":
+            kwargs["queryset"] = Quote.objects.filter(OID=self.form_OID)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 class QuoteAdmin(admin.ModelAdmin):
     list_display = ['QID', 'Supplier', 'QPrice', 'OID']
     readonly_fields = ['OID']
