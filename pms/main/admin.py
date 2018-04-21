@@ -20,15 +20,21 @@ from django.contrib import admin
 from .models import Order, Contract, Quote
 from django.forms import ValidationError, ModelForm
 
+#Custom form for Contract view on admin.  This allows data validation for the form.
 class ContractAdminForm(ModelForm):
     class Meta:
         model = Contract
         fields = ['CName', 'CBudget', 'remainingBudget', 'CStart', 'CEnd']
         
     def clean(self):
+        CName = self.cleaned_data['CName']
         CStart = self.cleaned_data['CStart']
         CEnd = self.cleaned_data['CEnd']
         CBudget = self.cleaned_data['CBudget']
+        contracts = Contract.objects.all().values('CName')
+        print(contracts)
+        if CName in contracts:
+            raise ValidationError('Name already exists.') 
         if CStart > CEnd:
             raise ValidationError('End Date cannot be before start datex.')
         if CBudget <= 0:

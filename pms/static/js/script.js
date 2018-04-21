@@ -4,6 +4,7 @@
 //     });
 // });
 
+//Highlights the tab of the active page
 let activepage = () => {
     let url = location.pathname.split("/").slice(-1);
     let id = `${url}-tab`;
@@ -27,8 +28,8 @@ let toggleQuoteRow = (clicked_id) => {
     }
 };
 
-
-orderStatusControl = () => {
+//Ensures only one status can be chosen at a time
+let orderStatusControl = () => {
     try {
         let id_isApproved = document.getElementById('id_isApproved');
         let id_isPending = document.getElementById('id_isPending');
@@ -60,8 +61,8 @@ orderStatusControl = () => {
     }
 };
 
-//JANKY, this is not a good long-term solution
-preventNegativeBudget = () => {
+//Makes sure contract budget is greater than 0.  Front-end form validator
+let preventNegativeBudget = () => {
     let prevent = () => {
         if(id_CBudget.value <= 0) {
             id_CBudget.value = 0;
@@ -73,7 +74,25 @@ preventNegativeBudget = () => {
     target.addEventListener("focusout", prevent);
 };
 
+let done = false;
+let checkComplete = () => {
+    let complete = () => {
+        done = true;            
+    }
+    let target = document.getElementById('submit');
+    target.addEventListener("click", complete);
+
+};
+
+//Checks to see if quotes are complete
+window.onbeforeunload = (done) => {
+    if(done) {
+        return true;
+    }
+};
+
 window.onload = callFunctions = () => {
     orderStatusControl();
     preventNegativeBudget();
+    checkComplete();
 };
