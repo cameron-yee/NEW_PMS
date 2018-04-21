@@ -62,40 +62,18 @@ orderStatusControl = () => {
 
 //JANKY, this is not a good long-term solution
 preventNegativeBudget = () => {
-    let id_CBudget = document.getElementById('id_CBudget');
-    
     let prevent = () => {
-        if(id_CBudget.value < 0) {
+        if(id_CBudget.value <= 0) {
             id_CBudget.value = 0;
             alert("NOTICE: Budget must be greater than 0.");
         }
     };
 
-    setInterval(prevent, 300);
+    let target = document.getElementById('id_CBudget');
+    target.addEventListener("focusout", prevent);
 };
 
 window.onload = callFunctions = () => {
     orderStatusControl();
     preventNegativeBudget();
 };
-
-
-    // let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-
-    // let element = document.querySelector(id_isApproved);
-
-    // setTimeout(function() {
-    //     element.setAttribute('checked', 'false');
-    // }, 5000)
-
-    // let observer = new MutationObserver(function(mutations) {
-    // mutations.forEach(function(mutation) {
-    //     if (mutation.type == "attributes") {
-    //     console.log("attributes changed")
-    //     }
-    // });
-    // });
-
-    // observer.observe(element, {
-    // attributes: true //configure it to listen to attribute changes
-    // });

@@ -18,7 +18,24 @@
 
 from django.contrib import admin
 from .models import Order, Contract, Quote
-from django.forms import ValidationError
+from django.forms import ValidationError, ModelForm
+
+class ContractAdminForm(ModelForm):
+    class Meta:
+        model = Contract
+        fields = ['CName', 'CBudget', 'remainingBudget', 'CStart', 'CEnd']
+        
+    def clean(self):
+        CStart = self.cleaned_data['CStart']
+        CEnd = self.cleaned_data['CEnd']
+        CBudget = self.cleaned_data['CBudget']
+        if CStart > CEnd:
+            raise ValidationError('End Date cannot be before start datex.')
+        if CBudget <= 0:
+            raise ValidationError('Budget cannot be 0 or negative.')
+        return self.cleaned_data
+
+
 
 class ContractAdmin(admin.ModelAdmin):
     class Media:
@@ -27,6 +44,7 @@ class ContractAdmin(admin.ModelAdmin):
         #     'all': ("/static/styles/css/styles.css",)
         # }
 
+    form = ContractAdminForm
     list_display = ['CName', 'CBudget', 'remainingBudget', 'CStart', 'CEnd']
     exclude = ['remainingBudget',] #list of fields to exclude from the Django add function
     def get_readonly_fields(self, request, obj=None):
