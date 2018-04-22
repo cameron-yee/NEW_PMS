@@ -182,13 +182,8 @@ def employee_spending(request):
 
 @login_required
 def myorders(request):
-<<<<<<< HEAD
-    user_id = request.user.id #gets the current users ID
-    orders = Order.objects.all() #gets all the Orders and sets it as the variable orders
-=======
     user_id = request.user.id
     orders = Order.objects.filter(EID = user_id)
->>>>>>> 5b367a50047c86b77486fa9f942777f0260a4ca5
     print(orders)
     myquoteorders = Order.objects.all().values('quoteorder__OID', 'quoteorder__QID','quoteorder__QLink', 'quoteorder__QPrice', 'quoteorder__Supplier', 'OID', 'productName', 'productDescription', 'quantity', 'total', 'dateApproved').filter(EID=user_id)
     print(myquoteorders)
