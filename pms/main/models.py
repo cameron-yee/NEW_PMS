@@ -13,7 +13,7 @@ class Quote(models.Model):
     QPrice = models.DecimalField(max_digits=15, decimal_places=2, null=True, verbose_name= 'item Price')
     Supplier = models.CharField(max_length=30)
     def __str__(self):
-        return 'QID: {} {}'.format(self.QID, self.Supplier) #sets the object name as the QID number and supplier in the format for example: "QID: 2 Target"
+        return '{}'.format(self.QID) #sets the object name as the QID number and supplier in the format for example: "QID: 2 Target"
 
 class Contract(models.Model):
     CID = models.AutoField(primary_key=True, verbose_name= 'contract ID')
@@ -23,21 +23,18 @@ class Contract(models.Model):
     CStart = models.DateField(verbose_name= 'contract Start Date')
     CEnd = models.DateField(null=True, verbose_name= 'contract End Date')
 
-    __original_budget = None
-    __original_remainingBudget = None
     def __init__(self, *args, **kwargs):
         super(Contract, self).__init__(*args, **kwargs)
-        self.__original_budget = self.CBudget
-        self.__original_remainingBudget = self.remainingBudget
+        self.original_budget = self.CBudget
+        self.original_remainingBudget = self.remainingBudget
 
     def save(self, *args, **kwargs):
         if self.remainingBudget is None:
             self.remainingBudget = self.CBudget
-        # if self.CBudget != self.__original_budget:
-        #     total = self.__original_budget - self.__original_remainingBudget
-        #     self.remainingBudget = self.CBudget - total
+        elif self.CBudget != self.original_budget:
+            total = self.original_budget - self.original_remainingBudget
+            self.remainingBudget = self.CBudget - total
         super(Contract, self).save(*args, **kwargs)
-
     def __str__(self):
         return '{}'.format(self.CName) #sets the object name as the name of the Contract
 
@@ -64,22 +61,27 @@ class Order(models.Model):
     isApproved = models.BooleanField(default=False, verbose_name= 'Approved')
     comments = models.CharField(max_length=2500, blank=True)
 
-
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
+        self.original_total = self.total
+        self.original_approved = self.isApproved
+
     def delete(self):
         contract_type = Contract.objects.get(CName=self.CID)
         if self.dateApproved != None: #if order is currently approved and is linked to a contract, before it is deleted, the amount of this order is taken out of this contract
-            contract_type.remainingBudget = contract_type.remainingBudget + self.total #adds order amount back to the corresponding contracts remaining budget
+            contract_type.remainingBudget = contract_type.remainingBudget + self.original_total #adds order amount back to the corresponding contracts remaining budget
             contract_type.save() #saves the contract model
         super(Order, self).delete()
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         req_user = User.objects.get(username=self.EID) #gets the users information that requested the order 
         contract_type = Contract.objects.get(CName=self.CID) #gets the contract that the order belongs to
+        if self.QID != None:
+            quote_price = Quote.objects.get(QID=str(self.QID)) #
+            self.total = quote_price.QPrice * self.quantity
         if (self.isDenied == True) and (self.isApproved == False) and (self.isPending == False):
-            if self.dateApproved != None: #checks if model has an approved date, if it does, then it adds total back to contract remainingBudget
-                contract_type.remainingBudget = contract_type.remainingBudget + self.total #readds the total that was previously taken away from contract remainingBudget
+            if self.original_approved == True: #checks if model has an approved date, if it does, then it adds total back to contract remainingBudget
+                contract_type.remainingBudget = contract_type.remainingBudget + self.original_total #readds the total that was previously taken away from contract remainingBudget
                 contract_type.save() #saves the contract model and readds the total the was previously taken away
                 self.dateApproved = None #resets the dateApproved field to empty
             send_mail(
@@ -90,9 +92,16 @@ class Order(models.Model):
                 fail_silently=False,
             )
         elif (self.isApproved == True) and (self.isDenied == False) and (self.isPending == False):
-            contract_type.remainingBudget = contract_type.remainingBudget - self.total #subtracts the total from the remainingBudget
-            contract_type.save() #saves the contract model to show the new remainingBudget
-            self.dateApproved = datetime.now() #sets the approved date to now
+            if self.original_approved == True:
+                if self.original_total != self.total:
+                    contract_type.remainingBudget = contract_type.remainingBudget + self.original_total
+                    contract_type.remainingBudget = contract_type.remainingBudget - self.total #subtracts the total from the remainingBudget
+                    contract_type.save() #saves the contract model to show the new remainingBudget
+            else:
+                contract_type.remainingBudget = contract_type.remainingBudget - self.total #subtracts the total from the remainingBudget
+                contract_type.save() #saves the contract model to show the new remainingBudget
+            if self.dateApproved == None:
+                self.dateApproved = datetime.now() #sets the approved date to now
             send_mail(
                 'PURCHASE ORDER #{} CONFIRMATION'.format(self.OID),
                 'Hi {},\n\nYour recent purchase order #{} request for item: "{}" has been approved.\n\n\nAM Purchase Management System'.format(req_user.first_name, self.OID, self.productName),
@@ -101,6 +110,10 @@ class Order(models.Model):
                 fail_silently=False,
             )
         else:
+            if self.original_approved == True:
+                contract_type.remainingBudget = contract_type.remainingBudget + self.original_total #readds the total that was previously taken away from contract remainingBudget
+                contract_type.save() #saves the contract model and readds the total the was previously taken away
+                self.dateApproved = None #resets the dateApproved field to empty
             self.isApproved = False
             self.isDenied = False
             self.isPending = True

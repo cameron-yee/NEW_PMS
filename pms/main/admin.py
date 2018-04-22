@@ -31,7 +31,7 @@ class ContractAdmin(admin.ModelAdmin):
     exclude = ['remainingBudget',] #list of fields to exclude from the Django add function
     def get_readonly_fields(self, request, obj=None):
         if obj: #This is the case when obj is already created i.e. it's an edit
-            return ['CBudget', 'remainingBudget']
+            return ['remainingBudget']
         else:
             return []
 
