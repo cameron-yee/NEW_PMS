@@ -33,9 +33,8 @@ class ContractAdminForm(ModelForm):
         CBudget = self.cleaned_data['CBudget']
         contracts = Contract.objects.all().values_list('CName')
         print(contracts)
-        for contract in contracts:
-            print(contract)
-            raise ValidationError('Name already exists.') 
+        if CName in contracts:
+            raise ValidationError('Name already exists.')
         if CStart > CEnd:
             raise ValidationError('End Date cannot be before start datex.')
         if CBudget <= 0:
@@ -56,7 +55,7 @@ class ContractAdmin(admin.ModelAdmin):
     exclude = ['remainingBudget',] #list of fields to exclude from the Django add function
     def get_readonly_fields(self, request, obj=None):
         if obj: #This is the case when obj is already created i.e. it's an edit
-            return ['CBudget', 'remainingBudget']
+            return ['remainingBudget']
         else:
             return []
 

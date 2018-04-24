@@ -85,27 +85,27 @@ def order(request):
             user_email = request.user.email #grabs the requesting users email
 
             if finished_purchase_form.total < 50:
-                current_purchase_form = finished_purchase_form 
-                current_quote = finished_quote_form
+                current_purchase_form = finished_purchase_form #gets the order form instance and sets the variable as current_purchase_form
+                current_quote = finished_quote_form #gets the quote form instance and sets the variable as current_quote
 
-                def setChosenQuote(current_purchase_form, current_quote):
-                    quote = current_quote
-                    current_purchase_form.QID = quote
-                    current_purchase_form.dateApproved = datetime.now()
-                    current_purchase_form.isPending = False
-                    current_purchase_form.isApproved = True
-                    current_purchase_form.save()
-                setChosenQuote(current_purchase_form, current_quote)
-                messages.info(request, 'Your order was successfully submitted and approved.')
+                def setChosenQuote(current_purchase_form, current_quote): #sets the QID into the Order form
+                    quote = current_quote #sets the quote variable as the current_quote instance
+                    current_purchase_form.QID = quote #places the QID into the order form
+                    current_purchase_form.dateApproved = datetime.now() #sets the date approved as todays date into the order
+                    current_purchase_form.isPending = False #sets the isPending value in the order to false
+                    current_purchase_form.isApproved = True #sets the isApproved value in the order as approved
+                    current_purchase_form.save() #saves the order form
+                setChosenQuote(current_purchase_form, current_quote) #calls the setChosenQuote def
+                messages.info(request, 'Your order was successfully submitted and approved.') #sets the on screen message to the user
 
             elif finished_purchase_form.total >= 500:
-                request.session['selected_order'] = finished_purchase_form.OID
-                return HttpResponseRedirect('/main/quotes')
+                request.session['selected_order'] = finished_purchase_form.OID #grabs the OID to transfer it to the quotes class below
+                return HttpResponseRedirect('/main/quotes') #sends the user to the quotes page for the two extra quotes
             else:
-                current_purchase_form = finished_purchase_form
-                current_quote = finished_quote_form
-                current_purchase_form.QID = current_quote
-                current_purchase_form.save()
+                current_purchase_form = finished_purchase_form #gets the order form instance and sets the variable as current_purchase_form
+                current_quote = finished_quote_form #gets the quote form instance and sets the variable as current_quote
+                current_purchase_form.QID = current_quote #places the QID into the order form
+                current_purchase_form.save() #saves the order form
                 send_mail(
                     'PURCHASE ORDER #{} CONFIRMATION'.format(finished_purchase_form.OID),
                     'Hi {},\n\nYour purchase order #{} request for item: "{}" has been received. Management will get back to you after reviewing the quote.\n\n\nPurchase Management System'.format(request.user.first_name, finished_purchase_form.OID, finished_purchase_form.productName),
@@ -113,7 +113,7 @@ def order(request):
                     [user_email],
                     fail_silently=False,
                 )
-                messages.info(request, 'Your order was successfully submitted.')
+                messages.info(request, 'Your order was successfully submitted.') #sets the on screen message for the user
             return HttpResponseRedirect('/')
             
     else:
@@ -129,19 +129,20 @@ def quotes(request):
         quote_form2 = QuoteForm(request.POST, prefix="quote_form2")
         quote_form3 = QuoteForm(request.POST, prefix="quote_form3")
         user_email = request.user.email
+
         if quote_form2.is_valid() and quote_form3.is_valid():
-            finished_quote_form2 = quote_form2.save(commit=False)
+            finished_quote_form2 = quote_form2.save(commit=False) 
             finished_quote_form3 = quote_form3.save(commit=False)
-            finished_quote_form2.OID = selected_order
-            finished_quote_form2.Supplier = quote_form2.cleaned_data['Supplier']
-            finished_quote_form2.QPrice = quote_form2.cleaned_data['QPrice'] 
-            finished_quote_form2.QLink = quote_form2.cleaned_data['QLink']
-            saved_quote2 = finished_quote_form2.save()
-            finished_quote_form3.OID = selected_order
-            finished_quote_form3.Supplier = quote_form3.cleaned_data['Supplier']
-            finished_quote_form3.QPrice = quote_form3.cleaned_data['QPrice'] 
-            finished_quote_form3.QLink = quote_form3.cleaned_data['QLink']
-            saved_quote3 = finished_quote_form3.save()
+            finished_quote_form2.OID = selected_order #sets the OID variable into the quote
+            finished_quote_form2.Supplier = quote_form2.cleaned_data['Supplier'] #sets the supplier information for quote 2
+            finished_quote_form2.QPrice = quote_form2.cleaned_data['QPrice'] #sets the QPrice information for quote 2
+            finished_quote_form2.QLink = quote_form2.cleaned_data['QLink'] #sets the QLink for quote 2
+            saved_quote2 = finished_quote_form2.save() #saves the quote 2
+            finished_quote_form3.OID = selected_order #sets the OID variable into the quote
+            finished_quote_form3.Supplier = quote_form3.cleaned_data['Supplier'] #sets the supplier information for quote 3
+            finished_quote_form3.QPrice = quote_form3.cleaned_data['QPrice'] #sets the QPrice information for quote 3
+            finished_quote_form3.QLink = quote_form3.cleaned_data['QLink'] #sets the Qlink for quote 3
+            saved_quote3 = finished_quote_form3.save() #saves the quote 3
 
             send_mail(
                 'PURCHASE ORDER CONFIRMATION',
@@ -150,7 +151,7 @@ def quotes(request):
                 [user_email],
                 fail_silently=False,
             )
-            messages.info(request, 'Your order was successfully submitted with the two extra quotes')
+            messages.info(request, 'Your order was successfully submitted with the two extra quotes') #sets the on screen message for the user
 
         return HttpResponseRedirect('/')
     else:
@@ -160,7 +161,7 @@ def quotes(request):
     
 @login_required
 def contract(request):
-    contracts = Contract.objects.all()
+    contracts = Contract.objects.all() #grabs all the information for all the contracts 
     return render(request, 'main/contract.html', {'contracts': contracts})
 
 @login_required
