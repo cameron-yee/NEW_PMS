@@ -79,17 +79,25 @@ let checkComplete = () => {
     let complete = () => {
         done = true;            
     }
-    let target = document.getElementById('submit');
-    target.addEventListener("click", complete);
+    try {
+        let target = document.getElementById('quote-submit');
+        target.addEventListener("click", complete);
+    } catch(TypeError) {
+        console.log('error');
+    }
 
 };
+
+let url = location.pathname.split("/").slice(-1);
+if(url == 'quotes') {
+    window.onbeforeunload = (done) => {
+        if(done) {
+            return true;
+        }
+    };
+}
 
 //Checks to see if quotes are complete
-window.onbeforeunload = (done) => {
-    if(done) {
-        return true;
-    }
-};
 
 window.onload = callFunctions = () => {
     orderStatusControl();
