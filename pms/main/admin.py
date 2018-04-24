@@ -34,7 +34,7 @@ class ContractAdminForm(ModelForm):
         contracts = Contract.objects.all().values('CName')
         print(contracts)
         if CName in contracts:
-            raise ValidationError('Name already exists.') 
+            raise ValidationError('Name already exists.')
         if CStart > CEnd:
             raise ValidationError('End Date cannot be before start datex.')
         if CBudget <= 0:
