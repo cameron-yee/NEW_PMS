@@ -31,9 +31,10 @@ class ContractAdminForm(ModelForm):
         CStart = self.cleaned_data['CStart']
         CEnd = self.cleaned_data['CEnd']
         CBudget = self.cleaned_data['CBudget']
-        contracts = Contract.objects.all().values('CName')
+        contracts = Contract.objects.all().values_list('CName')
         print(contracts)
-        if CName in contracts:
+        for contract in contracts:
+            print(contract)
             raise ValidationError('Name already exists.') 
         if CStart > CEnd:
             raise ValidationError('End Date cannot be before start datex.')
