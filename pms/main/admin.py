@@ -31,7 +31,7 @@ class ContractAdminForm(ModelForm):
         CStart = self.cleaned_data['CStart']
         CEnd = self.cleaned_data['CEnd']
         CBudget = self.cleaned_data['CBudget']
-        contracts = Contract.objects.all().values('CName')
+        contracts = Contract.objects.all().values_list('CName')
         print(contracts)
         if CName in contracts:
             raise ValidationError('Name already exists.')
