@@ -3,12 +3,12 @@
 
 {% block content %}
 {% if messages %}
-    <ul class="messages">
+    <div class="alert alert-success" role="alert">
         {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        <h6{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</h6>
         {% endfor %}
-    </ul>
-    {% endif %}
+    </div>
+{% endif %}
     <div class="container bck">
         <div class="row">
             <div class="col-12">
