@@ -44,6 +44,7 @@ class ContractAdminForm(ModelForm):
 
 
 class ContractAdmin(admin.ModelAdmin):
+    #allows for custom js scripts and css stylesheet for admin view
     class Media:
         js = ("/static/js/script.js",)
         # css = {
@@ -61,6 +62,7 @@ class ContractAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
+    #allows for custom js scripts and css stylesheet for admin view
     class Media:
         js = ("/static/js/script.js",)
         # css = {
@@ -89,6 +91,7 @@ class QuoteAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+#Sets the models as viewable 
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Contract, ContractAdmin)
 admin.site.register(Quote, QuoteAdmin)
