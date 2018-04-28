@@ -16,6 +16,7 @@ let activepage = () => {
     document.getElementById(id).className += ' active';
 };
 
+//Function to show quotes for an order on myorders page
 let toggleQuoteRow = (clicked_id) => {
     let id_num = clicked_id.slice(-1);
     let quote_row_id = `quote-row-${id_num}`;
@@ -63,6 +64,7 @@ let orderStatusControl = () => {
 
 //Makes sure contract budget is greater than 0.  Front-end form validator
 let preventNegativeBudget = () => {
+  try {
     let prevent = () => {
         if(id_CBudget.value <= 0) {
             id_CBudget.value = 0;
@@ -72,8 +74,12 @@ let preventNegativeBudget = () => {
 
     let target = document.getElementById('id_CBudget');
     target.addEventListener("focusout", prevent);
+  } catch (TypeError) {
+    console.log('Not on contract page');
+  }
 };
 
+//Makes sure that additional quotes are submitted, and warns user if not
 let done = false;
 let checkComplete = () => {
     let complete = () => {
@@ -90,17 +96,17 @@ let checkComplete = () => {
 
 let url = location.pathname.split("/").slice(-1);
 if(url == 'quotes') {
-    window.onbeforeunload = (done) => {
-        if(done) {
+    window.onbeforeunload = () => {
+        if(!done) {
             return true;
         }
     };
 }
 
-//Checks to see if quotes are complete
-
+//Calls functions on page load
 window.onload = callFunctions = () => {
     orderStatusControl();
     preventNegativeBudget();
     checkComplete();
 };
+

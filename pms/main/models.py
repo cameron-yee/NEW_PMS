@@ -6,8 +6,11 @@ from django.contrib.auth.models import User
 from datetime import datetime
 
 # Create your models here.
+#DB design for Quote object
 class Quote(models.Model):
+    #Fields for db table: main_quote
     QID = models.AutoField(primary_key=True, verbose_name= 'quote ID')
+        #related_name attribute is crucial for DB design, it's necessary because of multiple relations between quote and order tables (approved Quote)
     OID = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='quoteorder', verbose_name= 'order ID')
     QLink = models.CharField(max_length=1000, verbose_name= 'website Link')
     QPrice = models.DecimalField(max_digits=15, decimal_places=2, null=True, verbose_name= 'item Price')
@@ -15,7 +18,9 @@ class Quote(models.Model):
     def __str__(self):
         return '{}'.format(self.QID) #sets the object name as the QID number and supplier in the format for example: "QID: 2 Target"
 
+#DB design for Contract object
 class Contract(models.Model):
+    #Fields for db table: main_contract
     CID = models.AutoField(primary_key=True, verbose_name= 'contract ID')
     CName = models.CharField(max_length=30, verbose_name= 'contract Name')
     CBudget = models.DecimalField(max_digits=10, decimal_places=2, verbose_name= 'budget')
@@ -38,7 +43,9 @@ class Contract(models.Model):
     def __str__(self):
         return '{}'.format(self.CName) #sets the object name as the name of the Contract
 
+#DB design for an Order object
 class Order(models.Model):
+    #Fields for db table: main_order
     OID = models.AutoField(primary_key=True, verbose_name = 'order #')
     EID = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, verbose_name = 'employee ID')
     CID = models.ForeignKey(Contract, on_delete=models.CASCADE, verbose_name='Contract') #null allows blank entry to be stored as null, blank allows the form to be saved without QID
@@ -66,6 +73,7 @@ class Order(models.Model):
         self.original_total = self.total
         self.original_approved = self.isApproved
 
+    #Adjusts remaining budget if approved order is deleted
     def delete(self):
         contract_type = Contract.objects.get(CName=self.CID)
         if self.dateApproved != None: #if order is currently approved and is linked to a contract, before it is deleted, the amount of this order is taken out of this contract
@@ -122,6 +130,7 @@ class Order(models.Model):
     def __str__(self):
         return '#{}'.format(self.OID) #sets the object name as the Order number
 
+#Allows for admin to limit contracts that users can order on
 class UserContract(models.Model):
     CID = models.ForeignKey(Contract, on_delete=models.CASCADE, verbose_name='Contract')
     EID = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, verbose_name='employee ID')
