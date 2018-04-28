@@ -49,9 +49,11 @@ def email(request):
 #view to generate order page and run order request logic
 @login_required
 def order(request):
+    purchase_form = None
+    quote_form = None
     if request.method == "POST":
-        purchase_form = PurchaseOrderForm(request.POST)
-        quote_form = QuoteForm(request.POST)
+        purchase_form = PurchaseOrderForm(request.POST or None, user=request.user)
+        quote_form = QuoteForm(request.POST or None)
         price = 0
         quantity = 0.0
         saved_quote = 0
@@ -59,7 +61,8 @@ def order(request):
         if quote_form.is_valid():
             finished_quote_form = quote_form.save(commit=False)
             price = quote_form.cleaned_data['QPrice'] #grabs the price from the first quote and sets it as 'price'
-
+            finished_purchase_form = None
+            print("gets here")
             if purchase_form.is_valid(): #checks to see if the form fields are valid
                 finished_purchase_form = purchase_form.save(commit=False) #changes the finished purchase form object name
                 contractName = str(purchase_form.cleaned_data['CID']) #gets the contract name from the order
@@ -78,46 +81,49 @@ def order(request):
                     messages.info(request, 'Your order was not saved because the total amount was over the remaining budget for Contract: {}.'.format(contractName))
                     return HttpResponseRedirect('/main/order') #redirects to other page and does not save the order or quote entered.
             
-            finished_purchase_form.save() #saves the order form
-            finished_quote_form.OID = finished_purchase_form #sets the OID in the first quote
-            finished_quote_form.save() #saves the first quote that was given
+                finished_purchase_form.save() #saves the order form
+                finished_quote_form.OID = finished_purchase_form #sets the OID in the first quote
+                finished_quote_form.save() #saves the first quote that was given
+            else:
+                messages.info(request, 'You cannot access that contract')
+                render(request, 'main/order.html', {'purchase_form': purchase_form, 'quote_form': quote_form})
 
             user_email = request.user.email #grabs the requesting users email
 
-            if finished_purchase_form.total < 50:
-                current_purchase_form = finished_purchase_form #gets the order form instance and sets the variable as current_purchase_form
-                current_quote = finished_quote_form #gets the quote form instance and sets the variable as current_quote
+            if finished_purchase_form is not None:
+                if finished_purchase_form.total < 50:
+                    current_purchase_form = finished_purchase_form #gets the order form instance and sets the variable as current_purchase_form
+                    current_quote = finished_quote_form #gets the quote form instance and sets the variable as current_quote
 
-                def setChosenQuote(current_purchase_form, current_quote): #sets the QID into the Order form
-                    quote = current_quote #sets the quote variable as the current_quote instance
-                    current_purchase_form.QID = quote #places the QID into the order form
-                    current_purchase_form.dateApproved = datetime.now() #sets the date approved as todays date into the order
-                    current_purchase_form.isPending = False #sets the isPending value in the order to false
-                    current_purchase_form.isApproved = True #sets the isApproved value in the order as approved
+                    def setChosenQuote(current_purchase_form, current_quote): #sets the QID into the Order form
+                        quote = current_quote #sets the quote variable as the current_quote instance
+                        current_purchase_form.QID = quote #places the QID into the order form
+                        current_purchase_form.dateApproved = datetime.now() #sets the date approved as todays date into the order
+                        current_purchase_form.isPending = False #sets the isPending value in the order to false
+                        current_purchase_form.isApproved = True #sets the isApproved value in the order as approved
+                        current_purchase_form.save() #saves the order form
+                    setChosenQuote(current_purchase_form, current_quote) #calls the setChosenQuote def
+                    messages.info(request, 'Your order was successfully submitted and approved.') #sets the on screen message to the user
+                elif finished_purchase_form.total >= 500:
+                    request.session['selected_order'] = finished_purchase_form.OID #grabs the OID to transfer it to the quotes class below
+                    return HttpResponseRedirect('/main/quotes') #sends the user to the quotes page for the two extra quotes
+                else:
+                    current_purchase_form = finished_purchase_form #gets the order form instance and sets the variable as current_purchase_form
+                    current_quote = finished_quote_form #gets the quote form instance and sets the variable as current_quote
+                    current_purchase_form.QID = current_quote #places the QID into the order form
                     current_purchase_form.save() #saves the order form
-                setChosenQuote(current_purchase_form, current_quote) #calls the setChosenQuote def
-                messages.info(request, 'Your order was successfully submitted and approved.') #sets the on screen message to the user
-
-            elif finished_purchase_form.total >= 500:
-                request.session['selected_order'] = finished_purchase_form.OID #grabs the OID to transfer it to the quotes class below
-                return HttpResponseRedirect('/main/quotes') #sends the user to the quotes page for the two extra quotes
-            else:
-                current_purchase_form = finished_purchase_form #gets the order form instance and sets the variable as current_purchase_form
-                current_quote = finished_quote_form #gets the quote form instance and sets the variable as current_quote
-                current_purchase_form.QID = current_quote #places the QID into the order form
-                current_purchase_form.save() #saves the order form
-                send_mail(
-                    'PURCHASE ORDER #{} CONFIRMATION'.format(finished_purchase_form.OID),
-                    'Hi {},\n\nYour purchase order #{} request for item: "{}" has been received. Management will get back to you after reviewing the quote.\n\n\nPurchase Management System'.format(request.user.first_name, finished_purchase_form.OID, finished_purchase_form.productName),
-                    'yee.camero23@gmail.com', #Make info@system.com email
-                    [user_email],
-                    fail_silently=False,
-                )
-                messages.info(request, 'Your order was successfully submitted.') #sets the on screen message for the user
-            return HttpResponseRedirect('/')
-            
+                    send_mail(
+                        'PURCHASE ORDER #{} CONFIRMATION'.format(finished_purchase_form.OID),
+                        'Hi {},\n\nYour purchase order #{} request for item: "{}" has been received. Management will get back to you after reviewing the quote.\n\n\nPurchase Management System'.format(request.user.first_name, finished_purchase_form.OID, finished_purchase_form.productName),
+                        'yee.camero23@gmail.com', #Make info@system.com email
+                        [user_email],
+                        fail_silently=False,
+                    )
+                    messages.info(request, 'Your order was successfully submitted.') #sets the on screen message for the user
+                return HttpResponseRedirect('/')    
+                
     else:
-        purchase_form = PurchaseOrderForm()
+        purchase_form = PurchaseOrderForm(user=request.user.id)
         quote_form = QuoteForm()
     return render(request, 'main/order.html', {'purchase_form': purchase_form, 'quote_form': quote_form})
 

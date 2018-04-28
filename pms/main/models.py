@@ -121,3 +121,11 @@ class Order(models.Model):
 
     def __str__(self):
         return '#{}'.format(self.OID) #sets the object name as the Order number
+
+class UserContract(models.Model):
+    CID = models.ForeignKey(Contract, on_delete=models.CASCADE, verbose_name='Contract')
+    EID = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, verbose_name='employee ID')
+
+    def __str__(self):
+        contract_obj = Contract.objects.get(CName=str(self.CID))
+        return '{}'.format(contract_obj.CName)

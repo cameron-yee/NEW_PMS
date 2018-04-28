@@ -17,7 +17,7 @@
 # admin.site.register(Quote)
 
 from django.contrib import admin
-from .models import Order, Contract, Quote
+from .models import Order, Contract, Quote, UserContract
 from django.forms import ValidationError, ModelForm
 
 #Custom form for Contract view on admin.  This allows data validation for the form.
@@ -92,8 +92,12 @@ class QuoteAdmin(admin.ModelAdmin):
         return False
 
 #Sets the models as viewable 
+class UserContractAdmin(admin.ModelAdmin):
+    list_display = ['CID', 'EID']
+
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Contract, ContractAdmin)
 admin.site.register(Quote, QuoteAdmin)
+admin.site.register(UserContract, UserContractAdmin)
 
 admin.site.site_header = 'Allied Mountain Administration'
