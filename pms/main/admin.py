@@ -41,8 +41,6 @@ class ContractAdminForm(ModelForm):
             raise ValidationError('Budget cannot be 0 or negative.')
         return self.cleaned_data
 
-
-
 class ContractAdmin(admin.ModelAdmin):
     #allows for custom js scripts and css stylesheet for admin view
     class Media:
@@ -59,7 +57,6 @@ class ContractAdmin(admin.ModelAdmin):
             return ['remainingBudget']
         else:
             return []
-
 
 class OrderAdmin(admin.ModelAdmin):
     #allows for custom js scripts and css stylesheet for admin view
@@ -95,9 +92,9 @@ class QuoteAdmin(admin.ModelAdmin):
 class UserContractAdmin(admin.ModelAdmin):
     list_display = ['CID', 'EID']
 
+admin.site.register(UserContract, UserContractAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Contract, ContractAdmin)
 admin.site.register(Quote, QuoteAdmin)
-admin.site.register(UserContract, UserContractAdmin)
 
 admin.site.site_header = 'Allied Mountain Administration'

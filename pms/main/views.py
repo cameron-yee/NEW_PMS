@@ -62,7 +62,6 @@ def order(request):
             finished_quote_form = quote_form.save(commit=False)
             price = quote_form.cleaned_data['QPrice'] #grabs the price from the first quote and sets it as 'price'
             finished_purchase_form = None
-            print("gets here")
             if purchase_form.is_valid(): #checks to see if the form fields are valid
                 finished_purchase_form = purchase_form.save(commit=False) #changes the finished purchase form object name
                 contractName = str(purchase_form.cleaned_data['CID']) #gets the contract name from the order
@@ -78,14 +77,14 @@ def order(request):
                 finished_purchase_form.EID = request.user #sets the user EID into the order
 
                 if contract_budget < finished_purchase_form.total: #checks if order will exeed the remaining balance
-                    messages.info(request, 'Your order was not saved because the total amount was over the remaining budget for Contract: {}.'.format(contractName))
-                    return HttpResponseRedirect('/main/order') #redirects to other page and does not save the order or quote entered.
+                    messages.info(request, 'Your order cannot be submitted because the order total is over the remaining budget for Contract: {}.'.format(contractName))
+                    return render(request, 'main/order.html', {'purchase_form': purchase_form, 'quote_form': quote_form}) #redirects to other page and does not save the order or quote entered.
             
                 finished_purchase_form.save() #saves the order form
                 finished_quote_form.OID = finished_purchase_form #sets the OID in the first quote
                 finished_quote_form.save() #saves the first quote that was given
             else:
-                messages.info(request, 'You cannot access that contract')
+                messages.info(request, 'You do not have access to contract: {}'.format(purchase_form.cleaned_data['CID']))
                 render(request, 'main/order.html', {'purchase_form': purchase_form, 'quote_form': quote_form})
 
             user_email = request.user.email #grabs the requesting users email
@@ -173,7 +172,7 @@ def contract(request):
 @login_required
 def employee_spending(request):
     records = {}
-    employee_spending = Order.objects.values('EID', 'CID').annotate(Sum('total'))
+    employee_spending = Order.objects.values('EID', 'CID').filter(isApproved=True).annotate(Sum('total'))
     count = 0
     for queryset in employee_spending:
         # for key, value in queryset.items():
