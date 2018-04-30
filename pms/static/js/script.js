@@ -18,7 +18,8 @@ let activepage = () => {
 
 //Function to show quotes for an order on myorders page
 let toggleQuoteRow = (clicked_id) => {
-    let id_num = clicked_id.slice(-1);
+    let re = /\d+/;
+    let id_num = clicked_id.match(re);
     let quote_row_id = `quote-row-${id_num}`;
     let quote_row = document.getElementById(quote_row_id);
 
