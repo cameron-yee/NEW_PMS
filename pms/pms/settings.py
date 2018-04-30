@@ -23,10 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', '')#'uiby*ma-#1)ww84sdke!ov!&jh3fvsenvl)nvkceosju$o%(+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    '127.0.0.1',
+    '127.0.0.1', '.azurewebsites.net',
 ]
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -59,6 +59,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 ROOT_URLCONF = 'pms.urls'
 
 TEMPLATES = [
@@ -86,12 +88,12 @@ WSGI_APPLICATION = 'pms.wsgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DB_NAME', ''), #'pms',                      
+        'NAME': os.environ.get('DATABASENAME', ''), #'pms',                      
         #Set user and password for your postgres pms user
-        'USER': os.environ.get('DB_USER', ''), #'cyee',
-        'PASSWORD': os.environ.get('DB_PASS', ''), #'bigHouse8063!',
-        'HOST': 'localhost',
-        'PORT': '',
+        'USER': os.environ.get('DATABASEUSER', ''), #'cyee',
+        'PASSWORD': os.environ.get('DATABASEPASSWORD', ''), #'bigHouse8063!',
+        'HOST': os.environ.get('DATABASEHOST', ''),
+        'PORT': '5432',
     }
 }
 
