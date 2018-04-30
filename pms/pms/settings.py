@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '')#'uiby*ma-#1)ww84sdke!ov!&jh3fvsenv
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '127.0.0.1', '.azurewebsites.net',
+    '127.0.0.1', 'testdeployamps.azurewebsites.net',
 ]
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -59,8 +59,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
 ROOT_URLCONF = 'pms.urls'
 
 TEMPLATES = [
@@ -143,3 +141,6 @@ STATICFILES_DIRS = (
 # Redirect URL on successful login
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
